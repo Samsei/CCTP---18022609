@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BuildingPlacer : MonoBehaviour
 {
@@ -15,9 +15,13 @@ public class BuildingPlacer : MonoBehaviour
 
     public GameObject placementIndicator;
     public GameObject deleteIndicator;
+    public GameObject canvas;
+    public GameObject textPrefab;
+    public Camera cam;
 
     public static BuildingPlacer inst;
     public List<Vector3> placedBuildings = new List<Vector3>();
+
 
     void Awake()
     {
@@ -31,24 +35,19 @@ public class BuildingPlacer : MonoBehaviour
 
         if(Time.time - lastUpdateTime > placementIndicatorUpdateRate && currentlyPlacing)
         {
-            lastUpdateTime = Time.time;
-
-            curPlacementPos = Selector.inst.GetCurTilePosition();
-            placementIndicator.transform.position = curPlacementPos;
+            UpdatePlace();
         }
 
         else if (Time.time - lastUpdateTime > placementIndicatorUpdateRate && deleteIndicator)
         {
-            lastUpdateTime = Time.time;
-
-            curPlacementPos = Selector.inst.GetCurTilePosition();
-            deleteIndicator.transform.position = curPlacementPos;
+            UpdateDelete();
         }
 
         if (currentlyPlacing && 
             Input.GetMouseButtonDown(0) && 
             !CheckForBuilding() && 
-            City.inst.money >= curBuildingPreset.cost)
+            City.inst.money >= curBuildingPreset.cost &&
+            curPlacementPos.y >= -0.5f)
         {
             PlaceBuilding();
         }
@@ -70,6 +69,26 @@ public class BuildingPlacer : MonoBehaviour
         placedBuildings.Add(curPlacementPos);
 
         return false;
+    }
+
+    void UpdatePlace()
+    {
+        lastUpdateTime = Time.time;
+
+        curPlacementPos = Selector.inst.GetCurTilePosition();
+        placementIndicator.transform.position = curPlacementPos;
+
+        GameObject.FindGameObjectWithTag("mesh").GetComponent<MeshFilter>().mesh = curBuildingPreset.prefab.GetComponentInChildren<MeshFilter>().sharedMesh;
+        GameObject.FindGameObjectWithTag("mesh").GetComponent<Transform>().localScale = new Vector3(0.045f, 0.045f, 0.045f);
+        GameObject.FindGameObjectWithTag("mesh").transform.rotation = new Quaternion(0, 180, 0, 0);
+    }
+
+    void UpdateDelete()
+    {
+        lastUpdateTime = Time.time;
+
+        curPlacementPos = Selector.inst.GetCurTilePosition();
+        deleteIndicator.transform.position = curPlacementPos;
     }
 
     public void DeleteBuilding()
@@ -111,11 +130,17 @@ public class BuildingPlacer : MonoBehaviour
     {
         currentlyPlacing = false;
         placementIndicator.SetActive(false);
+        currentlyDeleting = false;
+        deleteIndicator.SetActive(false);
     }
 
     void PlaceBuilding()
     {
         GameObject buildingObj = Instantiate(curBuildingPreset.prefab, curPlacementPos, Quaternion.identity);
         City.inst.OnPlaceBuilding(curBuildingPreset);
+
+
+        GameObject text = Instantiate(textPrefab, Input.mousePosition, Quaternion.identity, canvas.transform);
+        text.GetComponent<Text>().text = string.Format("-${0}", curBuildingPreset.cost);       
     }
 }

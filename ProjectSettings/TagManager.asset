@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - building
+  - mesh
   layers:
   - Default
   - TransparentFX
