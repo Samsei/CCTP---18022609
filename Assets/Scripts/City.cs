@@ -16,6 +16,7 @@ public class City : MonoBehaviour
 
     public TextMeshProUGUI statsText;
 
+    [SerializeField]
     private List<BuildingPreset> buildings = new List<BuildingPreset>();
 
     public static City inst;
@@ -104,5 +105,10 @@ public class City : MonoBehaviour
 
         foreach(BuildingPreset building in buildings)
             curFood += building.food;
+    }
+
+    public void RemoveBuilding(BuildingPreset b)
+    {
+        buildings.Remove(b);
     }
 }

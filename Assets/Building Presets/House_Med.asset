@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: House_Med
   cost: 30
   costPerTurn: 20
-  prefab: {fileID: 0}
+  prefab: {fileID: 1593937742441068266, guid: ddbfc78d5b9bfbf419c65763e029ab0e, type: 3}
   population: 10
   jobs: 0
   food: 0

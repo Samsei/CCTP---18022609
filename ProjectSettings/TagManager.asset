@@ -6,6 +6,7 @@ TagManager:
   tags:
   - building
   - mesh
+  - desMesh
   layers:
   - Default
   - TransparentFX
