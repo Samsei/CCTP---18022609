@@ -8,11 +8,12 @@ public class BuildingPlacer : MonoBehaviour
     private bool currentlyDeleting;
     private BuildingPreset curBuildingPreset;
 
-    private float placementIndicatorUpdateRate = 0.05f;
     private float lastUpdateTime;
     private Vector3 curPlacementPos;
     private Vector3 radius = new Vector3(0.2f, 0.2f, 0.2f);
     private Vector3 vec;
+    private string direction = "South";
+    private int dirNum = 0;
 
     [SerializeField] GameObject placementIndicator;
     [SerializeField] GameObject deleteIndicator;
@@ -41,17 +42,17 @@ public class BuildingPlacer : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             CancelBuildingPlacement();
 
-        if (Time.time - lastUpdateTime > placementIndicatorUpdateRate && currentlyPlacing)
+        if (currentlyPlacing)
         {
             UpdatePlace();
         }
 
-        else if (Time.time - lastUpdateTime > placementIndicatorUpdateRate && deleteIndicator)
+        else if (deleteIndicator)
         {
             UpdateDelete();
         }
 
-        if (CanPlace())
+        if (CanPlace() && !CheckForBuilding())
         {
             PlaceBuilding();
         }
@@ -64,14 +65,42 @@ public class BuildingPlacer : MonoBehaviour
         else if (currentlyPlacing && Input.GetKeyDown(KeyCode.F))
         {
             placementIndicator.transform.Rotate(0, 90, 0);
+            ChangeDirection();
         }
+
+    }
+
+    void ChangeDirection()
+    {
+        dirNum++;
+        if (dirNum > 3)
+        {
+            dirNum = 0;
+        }
+
+        switch (dirNum)
+        {
+            case 0:
+                direction = "South";
+                    break;
+            case 1:
+                direction = "West";
+                break;
+            case 2:
+                direction = "North";
+                break;
+            case 3:
+                direction = "East";
+                break;
+            default:
+                break;
+        }       
     }
 
     bool CanPlace()
     {
         if (currentlyPlacing &&
-            Input.GetMouseButtonDown(0) &&
-            !CheckForBuilding() &&
+            Input.GetMouseButtonDown(0) &&           
             City.inst.money >= curBuildingPreset.cost &&
             curPlacementPos.y >= -0.5f)
         {
@@ -89,7 +118,6 @@ public class BuildingPlacer : MonoBehaviour
 
         else if (curBuildingPreset.prefab.gameObject.name != "Road" && !CheckForRoad())
         {
-            Debug.Log("There is no road");
             return true;
         }
 
@@ -100,10 +128,9 @@ public class BuildingPlacer : MonoBehaviour
     bool CheckForRoad()
     {
         GetForwardPos();
-        Debug.Log("Function Called");
+        Debug.Log(placementIndicator.transform.localRotation.y);
         if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].ToString() == "Road")
         {
-            Debug.Log("Contains Road");
             return true;
         }
         return false;
@@ -111,23 +138,25 @@ public class BuildingPlacer : MonoBehaviour
 
     void GetForwardPos()
     {
-        switch (placementIndicator.transform.rotation.y)
+        switch (direction)
         {
-            case 0:
+            case "South":
                 vec = new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z + 1);
                 break;
-            case 90:
+            case "West":
                 vec = new Vector3(curPlacementPos.x + 1, curPlacementPos.y, curPlacementPos.z);
                 break;
-            case 180:
+            case "North":
                 vec = new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z - 1);
                 break;
-            case -90:
+            case "East":
                 vec = new Vector3(curPlacementPos.x - 1, curPlacementPos.y, curPlacementPos.z);
                 break;
             default:
+                vec = new Vector3(0, 1, 0);
                 break;
         }
+        Debug.Log(vec);
     }
 
     void UpdatePlace()
