@@ -12,19 +12,19 @@ public class BuildingPlacer : MonoBehaviour
     private float lastUpdateTime;
     private Vector3 curPlacementPos;
     private Vector3 radius = new Vector3(0.2f, 0.2f, 0.2f);
+    private Vector3 vec;
 
-    public GameObject placementIndicator;
-    public GameObject deleteIndicator;
-    public GameObject canvas;
-    public GameObject textPrefab;
-    public Camera cam;
+    [SerializeField] GameObject placementIndicator;
+    [SerializeField] GameObject deleteIndicator;
+    [SerializeField] GameObject canvas;
+    [SerializeField] GameObject textPrefab;
+    [SerializeField] Camera cam;
 
-    public Material placeMat;
-    public Material desMat;
+    [SerializeField] Material placeMat;
+    [SerializeField] Material desMat;
 
     public static BuildingPlacer inst;
-    public List<Vector3> placedBuildings = new List<Vector3>();
-
+    public Dictionary<Vector3, string> placedBuildings = new Dictionary<Vector3, string>();
 
     void Awake()
     {
@@ -51,37 +51,83 @@ public class BuildingPlacer : MonoBehaviour
             UpdateDelete();
         }
 
-        if (currentlyPlacing &&
-            Input.GetMouseButtonDown(0) &&
-            !CheckForBuilding() &&
-            City.inst.money >= curBuildingPreset.cost &&
-            curPlacementPos.y >= -0.5f)
+        if (CanPlace())
         {
             PlaceBuilding();
-        }
-
-        else if (currentlyPlacing && City.inst.money < curBuildingPreset.cost)
-        {
-            //GameObject.FindGameObjectWithTag("mesh").GetComponent<MeshRenderer>().material = desMat;
         }
 
         else if (currentlyDeleting && Input.GetMouseButtonDown(0) && CheckForBuilding())
         {
             DeleteBuilding();
         }
+
+        else if (currentlyPlacing && Input.GetKeyDown(KeyCode.F))
+        {
+            placementIndicator.transform.Rotate(0, 90, 0);
+        }
+    }
+
+    bool CanPlace()
+    {
+        if (currentlyPlacing &&
+            Input.GetMouseButtonDown(0) &&
+            !CheckForBuilding() &&
+            City.inst.money >= curBuildingPreset.cost &&
+            curPlacementPos.y >= -0.5f)
+        {
+            return true;
+        }
+        return false;
     }
 
     public bool CheckForBuilding()
     {
-
-        if (placedBuildings.Contains(curPlacementPos))
+        if (placedBuildings.ContainsKey(curPlacementPos))
         {
             return true;
         }
 
-        placedBuildings.Add(curPlacementPos);
+        else if (curBuildingPreset.prefab.gameObject.name != "Road" && !CheckForRoad())
+        {
+            Debug.Log("There is no road");
+            return true;
+        }
 
+        placedBuildings.Add(curPlacementPos, curBuildingPreset.prefab.gameObject.name);
         return false;
+    }
+
+    bool CheckForRoad()
+    {
+        GetForwardPos();
+        Debug.Log("Function Called");
+        if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].ToString() == "Road")
+        {
+            Debug.Log("Contains Road");
+            return true;
+        }
+        return false;
+    }
+
+    void GetForwardPos()
+    {
+        switch (placementIndicator.transform.rotation.y)
+        {
+            case 0:
+                vec = new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z + 1);
+                break;
+            case 90:
+                vec = new Vector3(curPlacementPos.x + 1, curPlacementPos.y, curPlacementPos.z);
+                break;
+            case 180:
+                vec = new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z - 1);
+                break;
+            case -90:
+                vec = new Vector3(curPlacementPos.x - 1, curPlacementPos.y, curPlacementPos.z);
+                break;
+            default:
+                break;
+        }
     }
 
     void UpdatePlace()
@@ -89,9 +135,7 @@ public class BuildingPlacer : MonoBehaviour
         lastUpdateTime = Time.time;
 
         curPlacementPos = Selector.inst.GetCurTilePosition();
-        placementIndicator.transform.position = curPlacementPos;
-
-        
+        placementIndicator.transform.position = curPlacementPos;       
     }
 
     void UpdateDelete()
@@ -104,7 +148,7 @@ public class BuildingPlacer : MonoBehaviour
 
     public void DeleteBuilding()
     {
-        if (placedBuildings.Contains(deleteIndicator.transform.position))
+        if (placedBuildings.ContainsKey(deleteIndicator.transform.position))
         {
             GameObject[] buildings = GameObject.FindGameObjectsWithTag("building");
             foreach (var b in buildings)
@@ -130,8 +174,6 @@ public class BuildingPlacer : MonoBehaviour
     {       
         if (City.inst.money < buildingPreset.cost)
         {
-            //GameObject.FindGameObjectWithTag("mesh").GetComponent<MeshRenderer>().material = desMat;
-            SetMesh();
             return;
         }
 
@@ -140,15 +182,6 @@ public class BuildingPlacer : MonoBehaviour
         curBuildingPreset = buildingPreset;
         placementIndicator.SetActive(true);
         deleteIndicator.SetActive(false);
-        //GameObject.FindGameObjectWithTag("mesh").GetComponent<MeshRenderer>().material = placeMat;
-        SetMesh();
-    }
-
-    void SetMesh()
-    {
-        /*GameObject.FindGameObjectWithTag("mesh").GetComponent<MeshFilter>().mesh = curBuildingPreset.prefab.GetComponentInChildren<MeshFilter>().sharedMesh;
-        GameObject.FindGameObjectWithTag("mesh").GetComponent<Transform>().localScale = new Vector3(0.7f, 0.7f, 0.7f);
-        GameObject.FindGameObjectWithTag("mesh").transform.rotation = new Quaternion(0, 180, 0, 0);*/
     }
 
     public void CancelBuildingPlacement()
@@ -161,7 +194,8 @@ public class BuildingPlacer : MonoBehaviour
 
     void PlaceBuilding()
     {
-        GameObject buildingObj = Instantiate(curBuildingPreset.prefab, curPlacementPos, Quaternion.identity);
+        GameObject buildingObj = Instantiate(curBuildingPreset.prefab, curPlacementPos - new Vector3( 0, 0.1f, 0), Quaternion.identity);
+        buildingObj.transform.rotation = placementIndicator.transform.rotation;
         City.inst.OnPlaceBuilding(curBuildingPreset);
 
         GameObject text = Instantiate(textPrefab, Input.mousePosition, Quaternion.identity, canvas.transform);
