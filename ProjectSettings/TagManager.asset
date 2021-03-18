@@ -7,6 +7,8 @@ TagManager:
   - building
   - mesh
   - desMesh
+  - ground
+  - water
   layers:
   - Default
   - TransparentFX
