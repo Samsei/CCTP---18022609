@@ -102,10 +102,23 @@ public class BuildingPlacer : MonoBehaviour
         if (currentlyPlacing &&
             Input.GetMouseButtonDown(0) &&           
             City.inst.money >= curBuildingPreset.cost &&
-            curPlacementPos.y >= -0.5f)
+            curPlacementPos.y >= -0.5f &&
+            !OverWater())
         {
             return true;
         }
+        return false;
+    }
+
+    bool OverWater()
+    {
+        int layerMask = 1 << 8;
+
+        if (Physics.Raycast(placementIndicator.transform.position, new Vector3(0, -2, 0), 2, layerMask))
+        {
+            return true;
+        }
+
         return false;
     }
 
