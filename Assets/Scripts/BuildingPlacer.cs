@@ -25,7 +25,9 @@ public class BuildingPlacer : MonoBehaviour
     [SerializeField] Material desMat;
 
     public static BuildingPlacer inst;
-    public Dictionary<Vector3, string> placedBuildings = new Dictionary<Vector3, string>();
+    public Dictionary<Vector3, GameObject> placedBuildings = new Dictionary<Vector3, GameObject>();
+
+    GameObject hO;
 
     void Awake()
     {
@@ -39,6 +41,8 @@ public class BuildingPlacer : MonoBehaviour
 
     void Logic()
     {
+        curPlacementPos = Selector.inst.GetCurTilePosition();
+
         if (Input.GetKeyDown(KeyCode.Escape))
             CancelBuildingPlacement();
 
@@ -62,13 +66,17 @@ public class BuildingPlacer : MonoBehaviour
             DeleteBuilding();
         }
 
+        else if (!currentlyDeleting && !currentlyPlacing && Input.GetMouseButtonDown(1))
+        {
+            FindObjectOnTile();
+        }
+
         else if (currentlyPlacing && Input.GetKeyDown(KeyCode.F))
         {
             placementIndicator.transform.Rotate(0, 90, 0);
             ChangeDirection();
         }
-
-    }
+    }  
 
     void ChangeDirection()
     {
@@ -110,12 +118,47 @@ public class BuildingPlacer : MonoBehaviour
         return false;
     }
 
+    void FindObjectOnTile()
+    {
+        UpdatePlace();
+        if (placedBuildings.ContainsKey(curPlacementPos))
+        {
+            TileInfo.inst.OpenInfoBar(placedBuildings[curPlacementPos].gameObject);
+        }
+        else if (OverWater())
+        {
+            TileInfo.inst.OpenInfoBar(hO);
+        }
+        else if (OverGround())
+        {
+            TileInfo.inst.OpenInfoBar(hO);
+        }
+        return;
+    }
+
     bool OverWater()
     {
         int layerMask = 1 << 8;
+        RaycastHit hitObject;
 
-        if (Physics.Raycast(placementIndicator.transform.position, new Vector3(0, -2, 0), 2, layerMask))
+        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2, layerMask))
         {
+            hO = hitObject.transform.gameObject;
+            Debug.Log(hO);
+            return true;
+        }
+
+        return false;
+    }
+
+    bool OverGround()
+    {
+        int layerMask = 1 << 9;
+        RaycastHit hitObject;
+
+        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2, layerMask))
+        {
+            hO = hitObject.transform.gameObject;
             return true;
         }
 
@@ -134,7 +177,7 @@ public class BuildingPlacer : MonoBehaviour
             return true;
         }
 
-        placedBuildings.Add(curPlacementPos, curBuildingPreset.prefab.gameObject.name);
+        placedBuildings.Add(curPlacementPos, curBuildingPreset.prefab.gameObject);
         return false;
     }
 
@@ -142,7 +185,7 @@ public class BuildingPlacer : MonoBehaviour
     {
         GetForwardPos();
         Debug.Log(placementIndicator.transform.localRotation.y);
-        if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].ToString() == "Road")
+        if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].gameObject.name == "Road")
         {
             return true;
         }
@@ -174,17 +217,11 @@ public class BuildingPlacer : MonoBehaviour
 
     void UpdatePlace()
     {
-        lastUpdateTime = Time.time;
-
-        curPlacementPos = Selector.inst.GetCurTilePosition();
         placementIndicator.transform.position = curPlacementPos;       
     }
 
     void UpdateDelete()
     {
-        lastUpdateTime = Time.time;
-
-        curPlacementPos = Selector.inst.GetCurTilePosition();
         deleteIndicator.transform.position = curPlacementPos;
     }
 
