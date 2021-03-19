@@ -14,7 +14,7 @@ public class TextFloat : MonoBehaviour
         gameObject.transform.position += inc;
         col -= incCol;
         gameObject.GetComponent<Text>().color = col;
-        if (gameObject.GetComponent<Text>().color.a == 0)
-            Destroy(this, 0);
+
+        Destroy(gameObject, 3);
     }
 }

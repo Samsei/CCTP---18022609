@@ -17,7 +17,7 @@ public class City : MonoBehaviour
     public TextMeshProUGUI statsText;
 
     [SerializeField]
-    private List<BuildingPreset> buildings = new List<BuildingPreset>();
+    private List<GameObject> buildings = new List<GameObject>();
 
     public static City inst;
 
@@ -26,11 +26,11 @@ public class City : MonoBehaviour
         inst = this;
     }
 
-    public void OnPlaceBuilding(BuildingPreset building)
+    public void OnPlaceBuilding(GameObject building)
     {
-        maxPopulation += building.population;
-        maxJobs += building.jobs;
-        money -= building.cost;
+        maxPopulation += building.GetComponent<BuildingInst>().population;
+        maxJobs += building.GetComponent<BuildingInst>().jobs;
+        money -= building.GetComponent<BuildingInst>().cost;
         buildings.Add(building);
 
         SetText();
@@ -66,18 +66,18 @@ public class City : MonoBehaviour
     {
         money += curJobs * incomePerJob;
 
-        foreach(BuildingPreset building in buildings)
-            money -= building.costPerTurn;
+        foreach(GameObject building in buildings)
+            money -= building.GetComponent<BuildingInst>().costPerTurn;
     }
 
     void CalculatePopulation()
     {
         maxPopulation = 0;
 
-        foreach(BuildingPreset building in buildings)
-            maxPopulation += building.population;
+        foreach (GameObject building in buildings)
+            maxPopulation += building.GetComponent<BuildingInst>().maxPopulation;
 
-        if(curFood >= curPopulation && curPopulation < maxPopulation)
+        if (curFood >= curPopulation && curPopulation < maxPopulation)
         {
             curFood -= curPopulation / 4;
             curPopulation = Mathf.Min(curPopulation + (curFood / 4), maxPopulation);
@@ -93,8 +93,8 @@ public class City : MonoBehaviour
         curJobs = 0;
         maxJobs = 0;
 
-        foreach(BuildingPreset building in buildings)
-            maxJobs += building.jobs;
+        foreach (GameObject building in buildings)
+            maxJobs += building.GetComponent<BuildingInst>().maxJobs;
 
         curJobs = Mathf.Min(curPopulation, maxJobs);
     }
@@ -103,11 +103,11 @@ public class City : MonoBehaviour
     {
         curFood = 0;
 
-        foreach(BuildingPreset building in buildings)
-            curFood += building.food;
+        foreach (GameObject building in buildings)
+            curFood += building.GetComponent<BuildingInst>().food;
     }
 
-    public void RemoveBuilding(BuildingPreset b)
+    public void RemoveBuilding(GameObject b)
     {
         buildings.Remove(b);
     }

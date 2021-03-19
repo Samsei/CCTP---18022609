@@ -275,7 +275,15 @@ public class BuildingPlacer : MonoBehaviour
     {
         GameObject buildingObj = Instantiate(curBuildingPreset.prefab, curPlacementPos - new Vector3( 0, 0.1f, 0), Quaternion.identity);
         buildingObj.transform.rotation = placementIndicator.transform.rotation;
-        City.inst.OnPlaceBuilding(curBuildingPreset);
+        buildingObj.AddComponent<BuildingInst>();
+        BuildingInst bi = buildingObj.GetComponent<BuildingInst>();
+
+        bi.costPerTurn = curBuildingPreset.costPerTurn;
+        bi.maxFood = curBuildingPreset.food;
+        bi.maxJobs = curBuildingPreset.jobs;
+        bi.maxPopulation = curBuildingPreset.population;
+
+        City.inst.OnPlaceBuilding(buildingObj);
 
         GameObject text = Instantiate(textPrefab, Input.mousePosition, Quaternion.identity, canvas.transform);
         text.GetComponent<Text>().text = string.Format("-${0}", curBuildingPreset.cost);       
