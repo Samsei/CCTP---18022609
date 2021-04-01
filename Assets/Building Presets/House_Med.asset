@@ -19,3 +19,4 @@ MonoBehaviour:
   population: 10
   jobs: 0
   food: 0
+  pollution: 0

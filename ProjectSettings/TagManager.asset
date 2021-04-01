@@ -9,6 +9,7 @@ TagManager:
   - desMesh
   - ground
   - water
+  - pollution
   layers:
   - Default
   - TransparentFX
