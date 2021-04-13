@@ -10,6 +10,7 @@ TagManager:
   - ground
   - water
   - pollution
+  - border
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - building
   - water
   - ground
-  - 
+  - border
   - 
   - 
   - 

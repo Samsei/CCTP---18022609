@@ -138,13 +138,14 @@ public class BuildingPlacer : MonoBehaviour
 
     bool OverWater()
     {
-        int layerMask = 1 << 8;
-        RaycastHit hitObject;
+        int water = 1 << 8;
 
-        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2, layerMask))
+        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), 2, water))
         {
-            hO = hitObject.transform.gameObject;
-            Debug.Log(hO);
+            return true;
+        }
+        else if (!Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), 2))
+        {
             return true;
         }
 
