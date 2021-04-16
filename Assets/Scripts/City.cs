@@ -45,6 +45,11 @@ public class City : MonoBehaviour
         CalculateFood();
 
         SetText();
+
+        foreach (var p in GameObject.FindGameObjectsWithTag("pollution"))
+        {
+            p.GetComponent<Pollution>().EndTurn();
+        }
     }
 
     public void SetText()

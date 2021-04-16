@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 579892143238371520}
   - component: {fileID: 727359961603422143}
   - component: {fileID: 7950451057287490895}
+  - component: {fileID: 5572205762751026348}
   m_Layer: 0
   m_Name: Cube
   m_TagString: pollution
@@ -95,6 +96,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5572205762751026348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2809161985066548190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 084b37a800c4644449c470cd922b2ed0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentPollution: 0
 --- !u!1 &5115657864526883214
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,6 +17,5 @@ public class TileInfo : MonoBehaviour
     public void OpenInfoBar(GameObject tile)
     {
         infoBar.SetActive(true);
-        Debug.Log(tile.transform.position);
     }
 }

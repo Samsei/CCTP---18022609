@@ -185,7 +185,6 @@ public class BuildingPlacer : MonoBehaviour
     bool CheckForRoad()
     {
         GetForwardPos();
-        Debug.Log(placementIndicator.transform.localRotation.y);
         if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].gameObject.name == "Road")
         {
             return true;
@@ -213,7 +212,6 @@ public class BuildingPlacer : MonoBehaviour
                 vec = new Vector3(0, 1, 0);
                 break;
         }
-        Debug.Log(vec);
     }
 
     void UpdatePlace()
