@@ -9,20 +9,20 @@ public class WaterArrow : MonoBehaviour
     {
         if (direction == Water.Direction.NORTH)
         {
-            gameObject.transform.rotation = Quaternion.Euler(90, 90, 0);
+            gameObject.transform.rotation = Quaternion.Euler(0, 90, 0);
         }
         else if (direction == Water.Direction.SOUTH)
         {
-            gameObject.transform.rotation = Quaternion.Euler(90, 270, 0);
+            gameObject.transform.rotation = Quaternion.Euler(0, 270, 0);
 
         }
         else if (direction == Water.Direction.EAST)
         {
-            gameObject.transform.rotation = Quaternion.Euler(90, 180, 0);
+            gameObject.transform.rotation = Quaternion.Euler(0, 180, 0);
         }
         else if (direction == Water.Direction.WEST)
         {
-            gameObject.transform.rotation = Quaternion.Euler(90, 0, 0);
+            gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
 
         }
         else if (direction == Water.Direction.STILL)
