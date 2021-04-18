@@ -168,7 +168,7 @@ public class BuildingPlacer : MonoBehaviour
 
     public bool CheckForBuilding()
     {
-        if (placedBuildings.ContainsKey(curPlacementPos))
+        if (placedBuildings.ContainsKey(new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z)))
         {
             return true;
         }
@@ -225,12 +225,13 @@ public class BuildingPlacer : MonoBehaviour
 
     public void DeleteBuilding()
     {
-        if (placedBuildings.ContainsKey(deleteIndicator.transform.position))
+        Vector3 offset = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z);
+        if (placedBuildings.ContainsKey(offset))
         {
-            City.inst.RemoveBuilding(placedBuildings[deleteIndicator.transform.position]);
-            GameObject t = placedBuildings[deleteIndicator.transform.position];
+            City.inst.RemoveBuilding(placedBuildings[offset]);
+            GameObject t = placedBuildings[offset];
 
-            placedBuildings.Remove(deleteIndicator.transform.position);
+            placedBuildings.Remove(offset);
             Destroy(t, 0);
         }
     }

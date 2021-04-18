@@ -5,13 +5,10 @@ using UnityEngine;
 public class Pollution : MonoBehaviour
 {
     [SerializeField] public float currentPollution = 0.0f;
+    private float maxPollution = 256.0f;
 
     private Renderer _renderer;
     private MaterialPropertyBlock mpb;
-
-    private RaycastHit hitObject;
-
-    private Ray ray;
 
     private void Awake()
     {
@@ -21,9 +18,9 @@ public class Pollution : MonoBehaviour
 
     public void EndTurn(City.WindDirection windDirection, Dictionary<Vector3, GameObject> clouds)
     {
-        if (currentPollution > 256.0f)
+        if (currentPollution > maxPollution)
         {
-            currentPollution = 256.0f;
+            currentPollution = maxPollution;
         }
 
         //currentPollution -= 0.1f;
@@ -34,13 +31,11 @@ public class Pollution : MonoBehaviour
         }
 
         _renderer.GetPropertyBlock(mpb);
-        mpb.SetColor("_Color", new Color(0.9f, 0.7f, 0.2f, currentPollution / 256.0f));
+        mpb.SetColor("_Color", new Color(0.9f, 0.7f, 0.2f, currentPollution / maxPollution));
         _renderer.SetPropertyBlock(mpb);
 
         if (currentPollution > 32.0f && windDirection != City.WindDirection.STILL)
         {
-            ray.origin = gameObject.transform.position;
-
             switch (windDirection)
             {
 
@@ -79,7 +74,7 @@ public class Pollution : MonoBehaviour
             }            
         }
 
-        if (GetComponentInParent<Water>() && currentPollution >= 32.0f)
+        if (GetComponentInParent<Water>() && currentPollution >= (maxPollution / 16.0f))
         {
             GetComponentInParent<Water>().currentPollution += 10.0f;
             currentPollution -= 10.0f;
@@ -88,7 +83,7 @@ public class Pollution : MonoBehaviour
 
     void MovePollution(GameObject hit)
     {
-        hit.GetComponent<Pollution>().currentPollution += 10;
-        currentPollution -= 10;
+        hit.GetComponent<Pollution>().currentPollution += 10.0f;
+        currentPollution -= 10.0f;
     }
 }
