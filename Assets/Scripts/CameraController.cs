@@ -4,18 +4,25 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float moveSpeed;
+    [SerializeField] private float moveSpeed;
 
-    public float minXRot;
-    public float maxXRot;
+    [SerializeField] private float minXRot;
+    [SerializeField] private float maxXRot;
 
-    private float curXRot;
+    [SerializeField] private float curXRot;
 
-    public float minZoom;
-    public float maxZoom;
+    [SerializeField] private float minZoom;
+    [SerializeField] private float maxZoom;
 
-    public float zoomSpeed;
-    public float rotateSpeed;
+    [SerializeField] private float zoomSpeed;
+    [SerializeField] private float rotateSpeed;
+
+    private float x;
+    private float y;
+
+    private float moveX;
+
+    private float moveZ;
 
     private float curZoom;
     private Camera cam;
@@ -36,8 +43,8 @@ public class CameraController : MonoBehaviour
 
         if(Input.GetMouseButton(1))
         {
-            float x = Input.GetAxis("Mouse X");
-            float y = Input.GetAxis("Mouse Y");
+            x = Input.GetAxis("Mouse X");
+            y = Input.GetAxis("Mouse Y");
 
             curXRot += -y * rotateSpeed;
             curXRot = Mathf.Clamp(curXRot, minXRot, maxXRot);
@@ -50,8 +57,8 @@ public class CameraController : MonoBehaviour
         forward.Normalize();
         Vector3 right = cam.transform.right.normalized;
 
-        float moveX = Input.GetAxisRaw("Horizontal");
-        float moveZ = Input.GetAxisRaw("Vertical");
+        moveX = Input.GetAxisRaw("Horizontal");
+        moveZ = Input.GetAxisRaw("Vertical");
 
         Vector3 dir = forward * moveZ + right * moveX;
         dir.Normalize();

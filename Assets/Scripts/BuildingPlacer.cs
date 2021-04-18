@@ -178,14 +178,13 @@ public class BuildingPlacer : MonoBehaviour
             return true;
         }
 
-        placedBuildings.Add(curPlacementPos, curBuildingPreset.prefab.gameObject);
         return false;
     }
 
     bool CheckForRoad()
     {
         GetForwardPos();
-        if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].gameObject.name == "Road")
+        if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].name == "Road(Clone)")
         {
             return true;
         }
@@ -197,16 +196,16 @@ public class BuildingPlacer : MonoBehaviour
         switch (direction)
         {
             case "South":
-                vec = new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z + 1);
+                vec = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z + 1);
                 break;
             case "West":
-                vec = new Vector3(curPlacementPos.x + 1, curPlacementPos.y, curPlacementPos.z);
+                vec = new Vector3(curPlacementPos.x + 1, curPlacementPos.y - 0.1f, curPlacementPos.z);
                 break;
             case "North":
-                vec = new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z - 1);
+                vec = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z - 1);
                 break;
             case "East":
-                vec = new Vector3(curPlacementPos.x - 1, curPlacementPos.y, curPlacementPos.z);
+                vec = new Vector3(curPlacementPos.x - 1, curPlacementPos.y - 0.1f, curPlacementPos.z);
                 break;
             default:
                 vec = new Vector3(0, 1, 0);
@@ -228,15 +227,11 @@ public class BuildingPlacer : MonoBehaviour
     {
         if (placedBuildings.ContainsKey(deleteIndicator.transform.position))
         {
-            GameObject[] buildings = GameObject.FindGameObjectsWithTag("building");
-            foreach (var b in buildings)
-            {
-                if (b.transform.position == deleteIndicator.transform.position)
-                {
-                    //City.inst.RemoveBuilding(b.GetComponent<BuildingPreset>());
-                    Destroy(b, 0);                   
-                }
-            }
+            City.inst.RemoveBuilding(placedBuildings[deleteIndicator.transform.position]);
+            GameObject t = placedBuildings[deleteIndicator.transform.position];
+
+            placedBuildings.Remove(deleteIndicator.transform.position);
+            Destroy(t, 0);
         }
     }
 
@@ -281,8 +276,12 @@ public class BuildingPlacer : MonoBehaviour
         bi.maxFood = curBuildingPreset.food;
         bi.maxJobs = curBuildingPreset.jobs;
         bi.maxPopulation = curBuildingPreset.population;
+        bi.pollutionPerTurn = curBuildingPreset.pollution;
 
         City.inst.OnPlaceBuilding(buildingObj);
+
+        placedBuildings.Add(buildingObj.transform.position, buildingObj);
+        Debug.Log(placedBuildings.Keys.Count);
 
         GameObject text = Instantiate(textPrefab, Input.mousePosition, Quaternion.identity, canvas.transform);
         text.GetComponent<Text>().text = string.Format("-${0}", curBuildingPreset.cost);       

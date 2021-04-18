@@ -6,7 +6,17 @@ using UnityEngine;
 [System.Serializable]
 public class Water : MonoBehaviour
 {
-    int stop = 0;
+    public float currentPollution = 0.0f;
+
+    private Renderer _renderer;
+    private MaterialPropertyBlock mpb;
+
+    private void Awake()
+    {
+        mpb = new MaterialPropertyBlock();
+        _renderer = GetComponent<Renderer>();
+    }
+
     public enum Direction
     {
         STILL,
@@ -18,12 +28,30 @@ public class Water : MonoBehaviour
 
     public Direction direction;
 
-    private void Update()
+    private void Start()
     {
-        if (stop == 0 && direction != Direction.STILL)
+        if (direction != Direction.STILL)
         {
             GetComponentInChildren<WaterArrow>().SetDirection(direction);
-            stop++;
         }
+    }
+
+    public void EndTurn(Dictionary<Vector3, GameObject> waterTiles)
+    {
+        if (currentPollution > 256.0f)
+        {
+            currentPollution = 256.0f;
+        }
+
+        //currentPollution -= 0.1f;
+
+        if (currentPollution < 0.0f)
+        {
+            currentPollution = 0.0f;
+        }
+
+        _renderer.GetPropertyBlock(mpb);
+        mpb.SetColor("_Color", new Color(1.0f, 1.0f - (currentPollution / 512.0f), 1.0f - (currentPollution / 256.0f), 1.0f));
+        _renderer.SetPropertyBlock(mpb);
     }
 }

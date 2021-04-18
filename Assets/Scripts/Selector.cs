@@ -7,6 +7,7 @@ public class Selector : MonoBehaviour
 {
     private Camera cam;
     public static Selector inst;
+    float rayOut = 0.0f;
 
     void Awake()
     {
@@ -25,7 +26,6 @@ public class Selector : MonoBehaviour
 
         Plane plane = new Plane(Vector3.up, Vector3.zero);
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        float rayOut = 0.0f;
 
         if(plane.Raycast(cam.ScreenPointToRay(Input.mousePosition), out rayOut))
         {

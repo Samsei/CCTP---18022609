@@ -20,5 +20,25 @@ public class BuildingInst : MonoBehaviour
     public int happiness;
     public int garbageBuildup;
 
+    public int pollutionPerTurn;
+
     private int tolerance;
+
+    private RaycastHit hitObject;
+    private GameObject hO;
+
+    public void EndTurn()
+    {
+        if (pollutionPerTurn > 0)
+        {
+            Ray ray = new Ray();
+            ray.origin = gameObject.transform.position;
+            ray.direction = new Vector3(0, 1, 0);
+            if (Physics.Raycast(ray, out hitObject))
+            {
+                hO = hitObject.transform.gameObject;
+                hO.GetComponent<Pollution>().currentPollution += pollutionPerTurn;
+            }
+        }
+    }
 }

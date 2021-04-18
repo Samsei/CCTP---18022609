@@ -6,24 +6,49 @@ using TMPro;
 public class City : MonoBehaviour
 {
     public int money;
-    public int day;
-    public int curPopulation;
-    public int curJobs;
-    public int curFood;
-    public int maxPopulation;
-    public int maxJobs;
-    public int incomePerJob;
+    private int day;
+    private int curPopulation;
+    private int curJobs;
+    private int curFood;
+    private int maxPopulation;
+    private int maxJobs;
+    private int incomePerJob;
+    private int turnsUntilWindChange = 5;
 
     public TextMeshProUGUI statsText;
-
-    [SerializeField]
-    private List<GameObject> buildings = new List<GameObject>();
+    private Dictionary<Vector3, GameObject> buildings = new Dictionary<Vector3, GameObject>();
+    private Dictionary<Vector3, GameObject> pollutionClouds = new Dictionary<Vector3, GameObject>();
+    private Dictionary<Vector3, GameObject> waterTiles = new Dictionary<Vector3, GameObject>();
 
     public static City inst;
+
+    public enum WindDirection
+    {
+        STILL = 0,
+        NORTH = 1,
+        SOUTH = 2,
+        EAST = 3,
+        WEST = 4
+    }
+
+    public WindDirection windDirection;
 
     void Awake()
     {
         inst = this;
+    }
+
+    private void Start()
+    {
+        foreach (var p in GameObject.FindGameObjectsWithTag("pollution"))
+        {
+            pollutionClouds.Add(p.transform.position, p);
+        }
+
+        foreach (var p in GameObject.FindGameObjectsWithTag("water"))
+        {
+            waterTiles.Add(p.transform.position, p);
+        }
     }
 
     public void OnPlaceBuilding(GameObject building)
@@ -31,13 +56,52 @@ public class City : MonoBehaviour
         maxPopulation += building.GetComponent<BuildingInst>().population;
         maxJobs += building.GetComponent<BuildingInst>().jobs;
         money -= building.GetComponent<BuildingInst>().cost;
-        buildings.Add(building);
+        buildings.Add(building.transform.position, building);
 
         SetText();
     }
 
     public void EndTurn()
     {
+        if (turnsUntilWindChange > 0)
+        {
+            turnsUntilWindChange--;
+        }
+
+        if (turnsUntilWindChange == 0)
+        {
+            turnsUntilWindChange = Random.Range(3, 7);
+            int i= Random.Range(0, 4);
+            switch (i)
+            {
+                case 0:
+                    {
+                        windDirection = WindDirection.STILL;
+                        break;
+                    }
+                case 1:
+                    {
+                        windDirection = WindDirection.NORTH;
+                        break;
+                    }
+                case 2:
+                    {
+                        windDirection = WindDirection.SOUTH;
+                        break;
+                    }
+                case 3:
+                    {
+                        windDirection = WindDirection.EAST;
+                        break;
+                    }
+                case 4:
+                    {
+                        windDirection = WindDirection.WEST;
+                        break;
+                    }
+            }
+        }
+
         day++;
         CalculateMoney();
         CalculatePopulation();
@@ -46,16 +110,24 @@ public class City : MonoBehaviour
 
         SetText();
 
-        foreach (var p in GameObject.FindGameObjectsWithTag("pollution"))
+        foreach (var p in buildings.Values)
+        {            
+            p.GetComponent<BuildingInst>().EndTurn();
+        }
+        foreach (var p in pollutionClouds.Values)
         {
-            p.GetComponent<Pollution>().EndTurn();
+            p.GetComponent<Pollution>().EndTurn(windDirection, pollutionClouds);
+        }
+        foreach (var p in waterTiles.Values)
+        {
+            p.GetComponent<Water>().EndTurn(waterTiles);
         }
     }
 
     public void SetText()
     {
-        statsText.text = string.Format("Day: {0}   Money: ${1}   Pop: {2} / {3}   Jobs: {4} / {5}   Food: {6}", 
-            new object[7] 
+        statsText.text = string.Format("Day: {0}   Money: ${1}   Pop: {2} / {3}   Jobs: {4} / {5}   Food: {6}   Wind Direction: {7}",
+            new object[8]
             {
                 day,
                 money,
@@ -63,7 +135,8 @@ public class City : MonoBehaviour
                 maxPopulation,
                 curJobs,
                 maxJobs,
-                curFood
+                curFood,
+                windDirection
             });
     }
 
@@ -71,16 +144,16 @@ public class City : MonoBehaviour
     {
         money += curJobs * incomePerJob;
 
-        foreach(GameObject building in buildings)
-            money -= building.GetComponent<BuildingInst>().costPerTurn;
+        foreach(var b in buildings.Values)
+            money -= b.GetComponent<BuildingInst>().costPerTurn;
     }
 
     void CalculatePopulation()
     {
         maxPopulation = 0;
 
-        foreach (GameObject building in buildings)
-            maxPopulation += building.GetComponent<BuildingInst>().maxPopulation;
+        foreach (var b in buildings.Values)
+            maxPopulation += b.GetComponent<BuildingInst>().maxPopulation;
 
         if (curFood >= curPopulation && curPopulation < maxPopulation)
         {
@@ -98,7 +171,7 @@ public class City : MonoBehaviour
         curJobs = 0;
         maxJobs = 0;
 
-        foreach (GameObject building in buildings)
+        foreach (GameObject building in buildings.Values)
             maxJobs += building.GetComponent<BuildingInst>().maxJobs;
 
         curJobs = Mathf.Min(curPopulation, maxJobs);
@@ -108,12 +181,12 @@ public class City : MonoBehaviour
     {
         curFood = 0;
 
-        foreach (GameObject building in buildings)
+        foreach (GameObject building in buildings.Values)
             curFood += building.GetComponent<BuildingInst>().food;
     }
 
     public void RemoveBuilding(GameObject b)
     {
-        buildings.Remove(b);
+        buildings.Remove(b.transform.position);
     }
 }
