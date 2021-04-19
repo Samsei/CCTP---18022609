@@ -282,7 +282,6 @@ public class BuildingPlacer : MonoBehaviour
         City.inst.OnPlaceBuilding(buildingObj);
 
         placedBuildings.Add(buildingObj.transform.position, buildingObj);
-        Debug.Log(placedBuildings.Keys.Count);
 
         GameObject text = Instantiate(textPrefab, Input.mousePosition, Quaternion.identity, canvas.transform);
         text.GetComponent<Text>().text = string.Format("-${0}", curBuildingPreset.cost);       
