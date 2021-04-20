@@ -15,23 +15,34 @@ public class BuildingPlacer : MonoBehaviour
     private string direction = "South";
     private int dirNum = 0;
 
+    int water = 1 << 8;
+    int border = 1 << 10;
+
     [SerializeField] GameObject placementIndicator;
     [SerializeField] GameObject deleteIndicator;
     [SerializeField] GameObject canvas;
     [SerializeField] GameObject textPrefab;
     [SerializeField] Camera cam;
 
+    RaycastHit hitObject;
+    Vector3 offset;
     [SerializeField] Material placeMat;
     [SerializeField] Material desMat;
 
     public static BuildingPlacer inst;
     public Dictionary<Vector3, GameObject> placedBuildings = new Dictionary<Vector3, GameObject>();
+    public Dictionary<Vector3, GameObject> waterTiles = new Dictionary<Vector3, GameObject>();
 
     GameObject hO;
 
     void Awake()
     {
         inst = this;
+    }
+
+    private void Start()
+    {
+        waterTiles = City.inst.waterTiles;
     }
 
     void Update()
@@ -44,9 +55,11 @@ public class BuildingPlacer : MonoBehaviour
         curPlacementPos = Selector.inst.GetCurTilePosition();
 
         if (Input.GetKeyDown(KeyCode.Escape))
+        {
             CancelBuildingPlacement();
+        }
 
-        if (currentlyPlacing)
+        else if (currentlyPlacing)
         {
             UpdatePlace();
         }
@@ -66,7 +79,7 @@ public class BuildingPlacer : MonoBehaviour
             DeleteBuilding();
         }
 
-        else if (!currentlyDeleting && !currentlyPlacing && Input.GetMouseButtonDown(1))
+        else if (!currentlyDeleting && !currentlyPlacing && Input.GetMouseButtonDown(0))
         {
             FindObjectOnTile();
         }
@@ -110,7 +123,6 @@ public class BuildingPlacer : MonoBehaviour
         if (currentlyPlacing &&
             Input.GetMouseButtonDown(0) &&           
             City.inst.money >= curBuildingPreset.cost &&
-            curPlacementPos.y >= -0.5f &&
             !OverWater())
         {
             return true;
@@ -138,12 +150,15 @@ public class BuildingPlacer : MonoBehaviour
 
     bool OverWater()
     {
-        int water = 1 << 8;
-
         if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), 2, water))
         {
             return true;
         }
+        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), 2, border))
+        {
+            return true;
+        }
+
         else if (!Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), 2))
         {
             return true;
@@ -155,7 +170,6 @@ public class BuildingPlacer : MonoBehaviour
     bool OverGround()
     {
         int layerMask = 1 << 9;
-        RaycastHit hitObject;
 
         if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2, layerMask))
         {
@@ -184,10 +198,15 @@ public class BuildingPlacer : MonoBehaviour
     bool CheckForRoad()
     {
         GetForwardPos();
-        if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].name == "Road(Clone)")
+        if (curBuildingPreset.name == "WaterPump" && waterTiles.ContainsKey(vec) && waterTiles[vec].gameObject.CompareTag("water"))
         {
             return true;
         }
+        else if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].name == "Road(Clone)")
+        {
+            return true;
+        }
+        
         return false;
     }
 
@@ -225,7 +244,7 @@ public class BuildingPlacer : MonoBehaviour
 
     public void DeleteBuilding()
     {
-        Vector3 offset = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z);
+        offset = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z);
         if (placedBuildings.ContainsKey(offset))
         {
             City.inst.RemoveBuilding(placedBuildings[offset]);
@@ -273,6 +292,7 @@ public class BuildingPlacer : MonoBehaviour
         buildingObj.AddComponent<BuildingInst>();
         BuildingInst bi = buildingObj.GetComponent<BuildingInst>();
 
+        bi.cost = curBuildingPreset.cost;
         bi.costPerTurn = curBuildingPreset.costPerTurn;
         bi.maxFood = curBuildingPreset.food;
         bi.maxJobs = curBuildingPreset.jobs;

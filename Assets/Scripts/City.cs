@@ -10,6 +10,8 @@ public class City : MonoBehaviour
     private int curPopulation;
     private int curJobs;
     private int curFood;
+    public int curWater;
+    public int curElectricity;
     private int maxPopulation;
     private int maxJobs;
     private int incomePerJob;
@@ -18,7 +20,7 @@ public class City : MonoBehaviour
     public TextMeshProUGUI statsText;
     private Dictionary<Vector3, GameObject> buildings = new Dictionary<Vector3, GameObject>();
     private Dictionary<Vector3, GameObject> pollutionClouds = new Dictionary<Vector3, GameObject>();
-    private Dictionary<Vector3, GameObject> waterTiles = new Dictionary<Vector3, GameObject>();
+    public Dictionary<Vector3, GameObject> waterTiles = new Dictionary<Vector3, GameObject>();
 
     public static City inst;
 
@@ -112,7 +114,7 @@ public class City : MonoBehaviour
 
         foreach (var p in buildings.Values)
         {            
-            p.GetComponent<BuildingInst>().EndTurn();
+            p.GetComponent<BuildingInst>().EndTurn(curWater, curElectricity);
         }
         foreach (var p in pollutionClouds.Values)
         {

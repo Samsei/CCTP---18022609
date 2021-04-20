@@ -72,20 +72,12 @@ public class Water : MonoBehaviour
         mpb.SetColor("_Color", new Color(r, g, b, 1.0f));
         _renderer.SetPropertyBlock(mpb);
 
-        if (currentPollution > maxPollution / 8.0f)
+        if (currentPollution > 0.0f)
         {
             switch (direction)
             {
 
                 case Direction.NORTH:
-                    {
-                        if (waterTiles.ContainsKey(new Vector3(transform.position.x, transform.position.y, transform.position.z + 1)))
-                        {
-                            MovePollution(waterTiles[new Vector3(transform.position.x, transform.position.y, transform.position.z + 1)], 10.0f);
-                        }
-                        break;
-                    }
-                case Direction.SOUTH:
                     {
                         if (waterTiles.ContainsKey(new Vector3(transform.position.x, transform.position.y, transform.position.z - 1)))
                         {
@@ -93,19 +85,29 @@ public class Water : MonoBehaviour
                         }
                         break;
                     }
+                case Direction.SOUTH:
+                    {
+                        Debug.Log("South found");
+                        if (waterTiles.ContainsKey(new Vector3(transform.position.x, transform.position.y, transform.position.z + 1)))
+                        {
+                            MovePollution(waterTiles[new Vector3(transform.position.x, transform.position.y, transform.position.z + 1)], 10.0f);
+                            Debug.Log("Pollution Moved");
+                        }
+                        break;
+                    }
                 case Direction.EAST:
                     {
-                        if (waterTiles.ContainsKey(new Vector3(transform.position.x + 1, transform.position.y, transform.position.z)))
+                        if (waterTiles.ContainsKey(new Vector3(transform.position.x - 1, transform.position.y, transform.position.z)))
                         {
-                            MovePollution(waterTiles[new Vector3(transform.position.x + 1, transform.position.y, transform.position.z)], 10.0f);
+                            MovePollution(waterTiles[new Vector3(transform.position.x - 1, transform.position.y, transform.position.z)], 10.0f);
                         }
                         break;
                     }
                 case Direction.WEST:
                     {
-                        if (waterTiles.ContainsKey(new Vector3(transform.position.x - 1, transform.position.y, transform.position.z)))
+                        if (waterTiles.ContainsKey(new Vector3(transform.position.x + 1, transform.position.y, transform.position.z)))
                         {
-                            MovePollution(waterTiles[new Vector3(transform.position.x - 1, transform.position.y, transform.position.z)], 10.0f);
+                            MovePollution(waterTiles[new Vector3(transform.position.x + 1, transform.position.y, transform.position.z)], 10.0f);
                         }
                         break;
                     }

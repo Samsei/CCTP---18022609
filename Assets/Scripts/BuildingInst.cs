@@ -27,7 +27,7 @@ public class BuildingInst : MonoBehaviour
     private RaycastHit hitObject;
     private GameObject hO;
 
-    public void EndTurn()
+    public void EndTurn(int water, int electricity)
     {
         if (pollutionPerTurn > 0)
         {
@@ -39,6 +39,16 @@ public class BuildingInst : MonoBehaviour
                 hO = hitObject.transform.gameObject;
                 hO.GetComponent<Pollution>().currentPollution += pollutionPerTurn;
             }
+        }
+
+        if (water > 0)
+        {
+            City.inst.curWater -= population;
+        }
+
+        if (electricity > 0)
+        {
+            City.inst.curElectricity -= population;
         }
     }
 }
