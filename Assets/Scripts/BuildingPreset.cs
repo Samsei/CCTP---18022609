@@ -15,4 +15,6 @@ public class BuildingPreset : ScriptableObject
     public int jobs;
     public int food;
     public int pollution;
+    public int waterProduction;
+    public int electricityProduction;
 }

@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1eec0bd67a4f2fe49aa7b7aafe10b6c7, type: 3}
-  m_Name: House_Small
+  m_Name: NuclearPowerStation
   m_EditorClassIdentifier: 
-  displayName: House_Small
-  cost: 20
-  costPerTurn: 10
-  prefab: {fileID: 3512389444729558375, guid: 96ad136c90a4c324dabf1615330d4e10, type: 3}
-  population: 5
-  jobs: 0
+  displayName: 
+  cost: 500
+  costPerTurn: 30
+  prefab: {fileID: 289006956298963854, guid: 1a4f80428aaaaa449bf2347bb7e81718, type: 3}
+  population: 0
+  jobs: 20
   food: 0
+  pollution: 5
+  waterProduction: 0
+  electricityProduction: 400

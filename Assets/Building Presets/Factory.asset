@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: Factory
   cost: 20
   costPerTurn: 5
-  prefab: {fileID: 8776027918922997816, guid: 6f587fbf84b55264e88199f78627edeb, type: 3}
+  prefab: {fileID: 57907509668065397, guid: 281497d087418b84e8dbd7b41860a1f0, type: 3}
   population: 0
   jobs: 10
   food: 0

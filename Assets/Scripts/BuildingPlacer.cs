@@ -54,6 +54,11 @@ public class BuildingPlacer : MonoBehaviour
     {
         curPlacementPos = Selector.inst.GetCurTilePosition();
 
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+        {
+            DisableText();
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             CancelBuildingPlacement();
@@ -79,7 +84,7 @@ public class BuildingPlacer : MonoBehaviour
             DeleteBuilding();
         }
 
-        else if (!currentlyDeleting && !currentlyPlacing && Input.GetMouseButtonDown(0))
+        else if (!currentlyDeleting && !currentlyPlacing && Input.GetMouseButtonDown(2))
         {
             FindObjectOnTile();
         }
@@ -89,7 +94,12 @@ public class BuildingPlacer : MonoBehaviour
             placementIndicator.transform.Rotate(0, 90, 0);
             ChangeDirection();
         }
-    }  
+    }
+
+    void DisableText()
+    {
+        TileInfo.inst.Close();
+    }
 
     void ChangeDirection()
     {
@@ -132,10 +142,12 @@ public class BuildingPlacer : MonoBehaviour
 
     void FindObjectOnTile()
     {
-        UpdatePlace();
-        if (placedBuildings.ContainsKey(curPlacementPos))
+        curPlacementPos = Selector.inst.GetCurTilePosition();
+        offset = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z);
+
+        if (placedBuildings.ContainsKey(offset))
         {
-            TileInfo.inst.OpenInfoBar(placedBuildings[curPlacementPos].gameObject);
+            TileInfo.inst.OpenInfoBar(placedBuildings[offset]);
         }
         else if (OverWater())
         {
@@ -150,12 +162,14 @@ public class BuildingPlacer : MonoBehaviour
 
     bool OverWater()
     {
-        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), 2, water))
+        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2,  water))
         {
+            hO = hitObject.transform.gameObject;
             return true;
         }
-        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), 2, border))
+        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2, border))
         {
+            hO = hitObject.transform.gameObject;
             return true;
         }
 
@@ -247,6 +261,7 @@ public class BuildingPlacer : MonoBehaviour
         offset = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z);
         if (placedBuildings.ContainsKey(offset))
         {
+            Debug.Log(placedBuildings[offset].name);
             City.inst.RemoveBuilding(placedBuildings[offset]);
             GameObject t = placedBuildings[offset];
 
