@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eec0bd67a4f2fe49aa7b7aafe10b6c7, type: 3}
+  m_Name: SolarPowerStation
+  m_EditorClassIdentifier: 
+  displayName: 
+  cost: 0
+  costPerTurn: 0
+  prefab: {fileID: 6549670207974784876, guid: d447a45d1ee687f41a90870f6855e630, type: 3}
+  population: 0
+  jobs: 0
+  food: 0
+  pollution: 0
