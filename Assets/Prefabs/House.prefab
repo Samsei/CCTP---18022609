@@ -70,6 +70,7 @@ MonoBehaviour:
   foodCritical: {fileID: 21300000, guid: 287ba785d7daf6a44bea480aea3723cc, type: 3}
   illWarning: {fileID: 21300000, guid: 9297488c7ea499444a9f08edecebe137, type: 3}
   illCritical: {fileID: 21300000, guid: 27266111a314e4043b1318f902450d32, type: 3}
+  abandoned: {fileID: 21300000, guid: 03ba567580ebde3438eb7b6e935c4d6a, type: 3}
 --- !u!1001 &7072305583853919030
 PrefabInstance:
   m_ObjectHideFlags: 0

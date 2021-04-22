@@ -261,7 +261,6 @@ public class BuildingPlacer : MonoBehaviour
         offset = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z);
         if (placedBuildings.ContainsKey(offset))
         {
-            Debug.Log(placedBuildings[offset].name);
             City.inst.RemoveBuilding(placedBuildings[offset]);
             GameObject t = placedBuildings[offset];
 

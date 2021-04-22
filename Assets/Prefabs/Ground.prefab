@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 727359961603422143}
   - component: {fileID: 7950451057287490895}
   - component: {fileID: 5572205762751026348}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Pollution
   m_TagString: pollution
   m_Icon: {fileID: 0}

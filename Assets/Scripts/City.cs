@@ -18,8 +18,8 @@ public class City : MonoBehaviour
     private int turnsUntilWindChange = 5;
 
     public TextMeshProUGUI statsText;
-    private Dictionary<Vector3, GameObject> buildings = new Dictionary<Vector3, GameObject>();
-    private Dictionary<Vector3, GameObject> pollutionClouds = new Dictionary<Vector3, GameObject>();
+    public Dictionary<Vector3, GameObject> buildings = new Dictionary<Vector3, GameObject>();
+    public Dictionary<Vector3, GameObject> pollutionClouds = new Dictionary<Vector3, GameObject>();
     public Dictionary<Vector3, GameObject> waterTiles = new Dictionary<Vector3, GameObject>();
 
     public static City inst;

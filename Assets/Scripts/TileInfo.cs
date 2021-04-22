@@ -29,7 +29,7 @@ public class TileInfo : MonoBehaviour
         infoBar.SetActive(true);
         ray.origin = tile.transform.position;
         ray.direction = new Vector3(0, 1, 0);
-        if (Physics.Raycast(ray, out hitObject, mask))
+        if (Physics.Raycast(ray, out hitObject, 5, mask))
         {
             hO = hitObject.transform.gameObject;
         }
@@ -72,6 +72,39 @@ public class TileInfo : MonoBehaviour
                         tile.GetComponent<BuildingInst>().costPerTurn,
                     });
             }
+            else if (tile.CompareTag("util"))
+            {
+                if (tile.name == "WaterPump(Clone)")
+                {
+                    statsText.text = string.Format("Clean water production: {0}\nUnclean water production: {1}\n Air pollution: {2}%",
+                            new object[3]
+                            {
+                                tile.GetComponent<UtilityBuilding>().waterProduction,
+                                tile.GetComponent<UtilityBuilding>().uncleanWaterProduction,
+                                hO.GetComponent<Pollution>().currentPollution / 256 * 100
+                            });
+                }
+
+                else if (tile.name == "SolarPanel(Clone)")
+                {
+                    statsText.text = string.Format("Energy production: {0}\nProduction efficiency: {1}\n Air pollution: {2}%",
+                            new object[3]
+                            {
+                                tile.GetComponent<UtilityBuilding>().electricityProduction,
+                                100 - (hO.GetComponent<Pollution>().currentPollution / 256 / 2 * 100),
+                                hO.GetComponent<Pollution>().currentPollution / 256 * 100
+                            });
+                }
+            }
+
+            else if (tile.name == "Road(Clone)")
+            {
+                statsText.text = string.Format("Air pollution: {0}%",
+                        new object[1]
+                        {                               
+                                hO.GetComponent<Pollution>().currentPollution / 256 * 100
+                        });
+            }
         }
 
         else if (tile.CompareTag("ground"))
@@ -91,6 +124,6 @@ public class TileInfo : MonoBehaviour
                         (tile.GetComponentInChildren<Pollution>().currentPollution / 256) * 100,
                         (tile.GetComponent<Water>().currentPollution / 256) * 100
                     });
-        }
+        }       
     }
 }
