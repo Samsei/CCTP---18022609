@@ -17,17 +17,25 @@ public class BuildingInst : MonoBehaviour
     public int population;
     public int jobs;
 
-    public int happiness;
+    public int happiness = 75;
     public int garbageBuildup;
 
     public int pollutionPerTurn;
 
     private int tolerance;
+    private int turnsWithoutWater;
+    private int turnsWithoutElectricity;
 
     private RaycastHit hitObject;
     private GameObject hO;
 
-    public void EndTurn(int water, int electricity)
+    [SerializeField] GameObject warningIcon;
+    [SerializeField] Sprite eWarning;
+    [SerializeField] Sprite eCritical;
+    [SerializeField] Sprite wWarning;
+    [SerializeField] Sprite wCritical;
+
+    public void EndTurn(float water, float uncleanWater, int electricity, int food)
     {
         if (pollutionPerTurn > 0)
         {
@@ -41,14 +49,66 @@ public class BuildingInst : MonoBehaviour
             }
         }
 
-        if (water > 0)
+        if (water > 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
         {
-            City.inst.curWater -= population;
+            City.inst.water -= population / 2;
+            happiness += population / 4;
         }
 
-        if (electricity > 0)
+        if (water <= 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
         {
-            City.inst.curElectricity -= population;
+            happiness -= population / 4;
+            warningIcon.SetActive(true);
+            if (turnsWithoutWater < 10)
+            {
+                warningIcon.GetComponent<SpriteRenderer>().sprite = wWarning;
+                turnsWithoutWater++;
+            }
+
+            else if (turnsWithoutWater >= 10 && turnsWithoutWater < 20)
+            {
+                warningIcon.GetComponent<SpriteRenderer>().sprite = wCritical;
+                turnsWithoutWater++;
+            }
+            else
+            {
+                AbandonBuilding();
+            }
+            Debug.Log(turnsWithoutWater);
         }
+
+        if (electricity > 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+        {
+            City.inst.electricity -= population/4;
+            happiness += population / 4;
+        }
+
+        if (electricity <= 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+        {
+            happiness -= population / 4;
+
+            if (turnsWithoutElectricity < 10)
+            {
+                warningIcon.GetComponent<SpriteRenderer>().sprite = eWarning;
+                turnsWithoutElectricity++;
+            }
+
+            else if (turnsWithoutElectricity >= 10 && turnsWithoutElectricity < 20)
+            {
+                warningIcon.GetComponent<SpriteRenderer>().sprite = eCritical;
+                turnsWithoutElectricity++;
+            }
+            else
+            {
+                AbandonBuilding();
+            }
+            Debug.Log(turnsWithoutElectricity);
+
+        }
+    }
+
+    void AbandonBuilding()
+    {
+
     }
 }

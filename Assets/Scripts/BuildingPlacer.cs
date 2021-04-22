@@ -212,7 +212,7 @@ public class BuildingPlacer : MonoBehaviour
     bool CheckForRoad()
     {
         GetForwardPos();
-        if (curBuildingPreset.name == "WaterPump" && waterTiles.ContainsKey(vec) && waterTiles[vec].gameObject.CompareTag("water"))
+        if (curBuildingPreset.name == "WaterPump" && waterTiles.ContainsKey(vec) && waterTiles.ContainsKey(vec))
         {
             return true;
         }
@@ -304,7 +304,6 @@ public class BuildingPlacer : MonoBehaviour
     {
         GameObject buildingObj = Instantiate(curBuildingPreset.prefab, curPlacementPos - new Vector3( 0, 0.1f, 0), Quaternion.identity);
         buildingObj.transform.rotation = placementIndicator.transform.rotation;
-        buildingObj.AddComponent<BuildingInst>();
         BuildingInst bi = buildingObj.GetComponent<BuildingInst>();
 
         bi.cost = curBuildingPreset.cost;

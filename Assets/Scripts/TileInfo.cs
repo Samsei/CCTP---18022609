@@ -30,7 +30,6 @@ public class TileInfo : MonoBehaviour
         {
             if (tile.GetComponent<BuildingInst>().maxPopulation > 0)
             {
-                Debug.Log("True");
                 statsText.text = string.Format("Population: {0} / Max Population: {1} \nHappiness: {2}% \nCost per Turn: {3}\n",
                     new object[4]
                     {

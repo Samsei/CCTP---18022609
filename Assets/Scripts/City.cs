@@ -1,20 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 
 public class City : MonoBehaviour
 {
     public int money;
     private int day;
-    private int curPopulation;
-    private int curJobs;
-    private int curFood;
-    public int curWater;
-    public int curElectricity;
+    private int population;
+    private int jobs;
+    private int food;
+    public float water;
+    public float uncleanWater;
+    public int electricity;
     private int maxPopulation;
     private int maxJobs;
-    private int incomePerJob;
+    private int incomePerJob = 5;
     private int turnsUntilWindChange = 5;
 
     public TextMeshProUGUI statsText;
@@ -105,6 +105,7 @@ public class City : MonoBehaviour
         }
 
         day++;
+        CalculateUtilities();
         CalculateMoney();
         CalculatePopulation();
         CalculateJobs();
@@ -114,7 +115,7 @@ public class City : MonoBehaviour
 
         foreach (var p in buildings.Values)
         {            
-            p.GetComponent<BuildingInst>().EndTurn(curWater, curElectricity);
+            p.GetComponent<BuildingInst>().EndTurn(water, uncleanWater, electricity, food);
         }
         foreach (var p in pollutionClouds.Values)
         {
@@ -126,6 +127,19 @@ public class City : MonoBehaviour
         }
     }
 
+    private void CalculateUtilities()
+    {
+        water = 0;
+        uncleanWater = 0;
+        electricity = 0;
+        foreach (var b in GameObject.FindGameObjectsWithTag("util"))
+        {
+            water += b.GetComponent<UtilityBuilding>().GetWaterProduction(waterTiles);
+            uncleanWater += b.GetComponent<UtilityBuilding>().GetUncleanWaterProduction(waterTiles);
+            electricity += b.GetComponent<UtilityBuilding>().electricityProduction;
+        }
+    }
+
     public void SetText()
     {
         statsText.text = string.Format("Day: {0}   Money: ${1}   Pop: {2} / {3}   Jobs: {4} / {5}   Food: {6}   Wind Direction: {7}",
@@ -133,58 +147,54 @@ public class City : MonoBehaviour
             {
                 day,
                 money,
-                curPopulation,
+                population,
                 maxPopulation,
-                curJobs,
+                jobs,
                 maxJobs,
-                curFood,
+                food,
                 windDirection
             });
     }
 
     void CalculateMoney()
     {
-        money += curJobs * incomePerJob;
+        money += jobs * incomePerJob;
 
-        foreach(var b in buildings.Values)
+        foreach (var b in buildings.Values)
+        {
             money -= b.GetComponent<BuildingInst>().costPerTurn;
+        }
     }
 
     void CalculatePopulation()
     {
         maxPopulation = 0;
-
+        population = 0;
         foreach (var b in buildings.Values)
+        {
             maxPopulation += b.GetComponent<BuildingInst>().maxPopulation;
-
-        if (curFood >= curPopulation && curPopulation < maxPopulation)
-        {
-            curFood -= curPopulation / 4;
-            curPopulation = Mathf.Min(curPopulation + (curFood / 4), maxPopulation);
-        }
-        else if(curFood < curPopulation)
-        {
-            curPopulation = curFood;
+            population += b.GetComponent<BuildingInst>().population;
         }
     }
 
     void CalculateJobs()
     {
-        curJobs = 0;
+        jobs = 0;
         maxJobs = 0;
 
         foreach (GameObject building in buildings.Values)
+        {
             maxJobs += building.GetComponent<BuildingInst>().maxJobs;
-
-        curJobs = Mathf.Min(curPopulation, maxJobs);
+            jobs += building.GetComponent<BuildingInst>().jobs;
+        }
     }
 
     void CalculateFood()
     {
-        curFood = 0;
+        food = 0;
 
         foreach (GameObject building in buildings.Values)
-            curFood += building.GetComponent<BuildingInst>().food;
+            food += building.GetComponent<BuildingInst>().food;
     }
 
     public void RemoveBuilding(GameObject b)
