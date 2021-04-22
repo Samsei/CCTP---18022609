@@ -11,7 +11,7 @@ public class City : MonoBehaviour
    [SerializeField] public float food;
     public float water;
     public float uncleanWater;
-    public int electricity;
+    public float electricity;
     private int maxPopulation;
     private int maxJobs;
     private int incomePerJob = 5;
@@ -107,9 +107,9 @@ public class City : MonoBehaviour
         day++;
         CalculateUtilities();
         CalculateMoney();
+        CalculateFood();
         CalculatePopulation();
         CalculateJobs();
-        CalculateFood();
 
         SetText();
 
@@ -185,7 +185,17 @@ public class City : MonoBehaviour
         foreach (GameObject building in buildings.Values)
         {
             maxJobs += building.GetComponent<BuildingInst>().maxJobs;
-            jobs += building.GetComponent<BuildingInst>().jobs;
+            jobs += building.GetComponent<BuildingInst>().jobs;           
+        }
+
+        foreach (GameObject building in buildings.Values)
+        {
+            if (population > 0 && jobs < maxJobs &&
+                building.GetComponent<BuildingInst>().maxJobs > building.GetComponent<BuildingInst>().jobs &&
+                population > jobs)
+            {
+                building.GetComponent<BuildingInst>().jobs++;
+            }
         }
     }
 

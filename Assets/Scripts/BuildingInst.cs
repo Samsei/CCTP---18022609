@@ -45,7 +45,7 @@ public class BuildingInst : MonoBehaviour
     [SerializeField] Sprite illWarning;
     [SerializeField] Sprite illCritical;
 
-    public void EndTurn(float water, float uncleanWater, int electricity, float curFood)
+    public void EndTurn(float water, float uncleanWater, float electricity, float curFood)
     {
         StopAllCoroutines();
 
@@ -89,6 +89,18 @@ public class BuildingInst : MonoBehaviour
             }
         }
 
+        if (gameObject.name == "SolarPanel(Clone)")
+        {
+            ray.origin = gameObject.transform.position;
+            ray.direction = new Vector3(0, 1, 0);
+            if (Physics.Raycast(ray, out hitObject))
+            {
+                Debug.Log("Test");
+                hO = hitObject.transform.gameObject;
+                GetComponent<UtilityBuilding>().electricityProduction = (200 * (1 - hO.GetComponent<Pollution>().currentPollution / 256 / 2));
+            }
+        }
+
         if (water > 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
         {
             City.inst.water -= population / 2;
@@ -114,6 +126,11 @@ public class BuildingInst : MonoBehaviour
 
         if (curFood > 0 && gameObject.name == "House(Clone)")
         {
+            if (population < maxPopulation)
+            {
+                population += 1;
+            }
+
             happiness += population / 4;
             City.inst.food -= population / 2;
             noFood = false;
@@ -249,7 +266,11 @@ public class BuildingInst : MonoBehaviour
             warningIcon.GetComponent<SpriteRenderer>().sprite = spriteArray[3];
             yield return new WaitForSeconds(2);
         }
-        StartCoroutine(symbolSwap());
+
+        if (noWater || noElectric || noFood || isIll)
+        {
+            StartCoroutine(symbolSwap());
+        }
     }
 
     void AbandonBuilding()

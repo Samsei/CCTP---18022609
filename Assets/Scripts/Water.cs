@@ -72,7 +72,7 @@ public class Water : MonoBehaviour
         mpb.SetColor("_Color", new Color(r, g, b, 1.0f));
         _renderer.SetPropertyBlock(mpb);
 
-        if (currentPollution > 0.0f)
+        if (currentPollution > 10.0f)
         {
             switch (direction)
             {
@@ -87,11 +87,9 @@ public class Water : MonoBehaviour
                     }
                 case Direction.SOUTH:
                     {
-                        Debug.Log("South found");
                         if (waterTiles.ContainsKey(new Vector3(transform.position.x, transform.position.y, transform.position.z + 1)))
                         {
                             MovePollution(waterTiles[new Vector3(transform.position.x, transform.position.y, transform.position.z + 1)], 10.0f);
-                            Debug.Log("Pollution Moved");
                         }
                         break;
                     }
