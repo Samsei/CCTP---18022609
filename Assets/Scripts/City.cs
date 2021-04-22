@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class City : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class City : MonoBehaviour
     private int day;
     private int population;
     private int jobs;
-   [SerializeField] public float food;
+    [SerializeField] public float food;
     public float water;
     public float uncleanWater;
     public float electricity;
@@ -23,6 +24,7 @@ public class City : MonoBehaviour
     public Dictionary<Vector3, GameObject> waterTiles = new Dictionary<Vector3, GameObject>();
 
     public static City inst;
+    public GameObject pauseUI;
 
     public enum WindDirection
     {
@@ -212,5 +214,27 @@ public class City : MonoBehaviour
     public void RemoveBuilding(GameObject b)
     {
         buildings.Remove(b.transform.position);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            pauseUI.SetActive(true);
+            Time.timeScale = 0;
+        }
+    }
+
+    public void Unpause()
+    {
+        pauseUI.SetActive(false);
+        Time.timeScale = 1;
+    }
+
+    public void Quit()
+    {
+        pauseUI.SetActive(false);
+        Time.timeScale = 1;
+        SceneManager.LoadScene("Title");
     }
 }
