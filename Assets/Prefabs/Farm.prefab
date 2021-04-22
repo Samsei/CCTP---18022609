@@ -56,13 +56,21 @@ MonoBehaviour:
   population: 0
   jobs: 0
   happiness: 75
-  garbageBuildup: 0
   pollutionPerTurn: 0
   warningIcon: {fileID: 2130424791081416444}
-  eWarning: {fileID: 21300000, guid: cc3339e2f76a43f4296a0d854aefd99d, type: 3}
-  eCritical: {fileID: 21300000, guid: 98aee347c1acdc943a5f62ace43369df, type: 3}
-  wWarning: {fileID: 21300000, guid: 25a4908951bb9f94989d965780b0dd5d, type: 3}
-  wCritical: {fileID: 21300000, guid: b347fb81a741e744db4f7eadc898fe6f, type: 3}
+  spriteArray:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  electricWarning: {fileID: 21300000, guid: cc3339e2f76a43f4296a0d854aefd99d, type: 3}
+  electricCritical: {fileID: 21300000, guid: 98aee347c1acdc943a5f62ace43369df, type: 3}
+  waterWarning: {fileID: 21300000, guid: 25a4908951bb9f94989d965780b0dd5d, type: 3}
+  waterCritical: {fileID: 21300000, guid: b347fb81a741e744db4f7eadc898fe6f, type: 3}
+  foodWarning: {fileID: 21300000, guid: 91ba44c54550e8e49a2d165448175a7b, type: 3}
+  foodCritical: {fileID: 21300000, guid: 287ba785d7daf6a44bea480aea3723cc, type: 3}
+  illWarning: {fileID: 21300000, guid: 9297488c7ea499444a9f08edecebe137, type: 3}
+  illCritical: {fileID: 21300000, guid: 27266111a314e4043b1318f902450d32, type: 3}
 --- !u!1 &7138066632878056061
 GameObject:
   m_ObjectHideFlags: 0

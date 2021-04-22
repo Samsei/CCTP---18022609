@@ -8,7 +8,7 @@ public class City : MonoBehaviour
     private int day;
     private int population;
     private int jobs;
-    private int food;
+   [SerializeField] public float food;
     public float water;
     public float uncleanWater;
     public int electricity;
@@ -194,7 +194,9 @@ public class City : MonoBehaviour
         food = 0;
 
         foreach (GameObject building in buildings.Values)
+        {
             food += building.GetComponent<BuildingInst>().food;
+        }
     }
 
     public void RemoveBuilding(GameObject b)

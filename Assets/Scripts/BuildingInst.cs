@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BuildingInst : MonoBehaviour
@@ -9,37 +8,49 @@ public class BuildingInst : MonoBehaviour
     public int cost;
     public int costPerTurn;
 
-    public int maxFood;
+    public float maxFood;
     public int maxPopulation;
     public int maxJobs;
 
-    public int food;
+    public float food;
     public int population;
     public int jobs;
 
     public int happiness = 75;
-    public int garbageBuildup;
 
     public int pollutionPerTurn;
 
-    private int tolerance;
     private int turnsWithoutWater;
     private int turnsWithoutElectricity;
+    private int turnsWithoutFood;
+    private int turnsIll;
 
     private RaycastHit hitObject;
     private GameObject hO;
+    private Ray ray;
+
+    private bool noWater = false;
+    private bool noElectric = false;
+    private bool noFood = false;
+    private bool isIll = false;
 
     [SerializeField] GameObject warningIcon;
-    [SerializeField] Sprite eWarning;
-    [SerializeField] Sprite eCritical;
-    [SerializeField] Sprite wWarning;
-    [SerializeField] Sprite wCritical;
+    [SerializeField] Sprite[] spriteArray;
+    [SerializeField] Sprite electricWarning;
+    [SerializeField] Sprite electricCritical;
+    [SerializeField] Sprite waterWarning;
+    [SerializeField] Sprite waterCritical;
+    [SerializeField] Sprite foodWarning;
+    [SerializeField] Sprite foodCritical;
+    [SerializeField] Sprite illWarning;
+    [SerializeField] Sprite illCritical;
 
-    public void EndTurn(float water, float uncleanWater, int electricity, int food)
+    public void EndTurn(float water, float uncleanWater, int electricity, float curFood)
     {
+        StopAllCoroutines();
+
         if (pollutionPerTurn > 0)
         {
-            Ray ray = new Ray();
             ray.origin = gameObject.transform.position;
             ray.direction = new Vector3(0, 1, 0);
             if (Physics.Raycast(ray, out hitObject))
@@ -49,62 +60,196 @@ public class BuildingInst : MonoBehaviour
             }
         }
 
+        if (maxFood > 0)
+        {
+            ray.origin = gameObject.transform.position;
+            ray.direction = new Vector3(0, 1, 0);
+            if (Physics.Raycast(ray, out hitObject))
+            {
+                hO = hitObject.transform.gameObject;
+                food = maxFood * (1.0f - (hO.GetComponent<Pollution>().currentPollution / 256.0f / 2));
+            }
+        }
+
+        if (gameObject.name == "House(Clone)")
+        {
+            ray.origin = gameObject.transform.position;
+            ray.direction = new Vector3(0, 1, 0);
+            if (Physics.Raycast(ray, out hitObject))
+            {
+                hO = hitObject.transform.gameObject;
+                if(hO.GetComponent<Pollution>().currentPollution / 256 > 0.35f)
+                {
+                    isIll = true;
+                }
+                else
+                {
+                    isIll = false;
+                }
+            }
+        }
+
         if (water > 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
         {
             City.inst.water -= population / 2;
             happiness += population / 4;
+            noWater = false;
         }
 
-        if (water <= 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+        else if (uncleanWater > 0 && water < 0 && gameObject.name == "House(Clone)")
+        {
+            City.inst.uncleanWater -= population / 2;
+            happiness -= population / 8;
+            isIll = true;
+            warningIcon.SetActive(true);
+        }
+
+        else if (water <= 0 && uncleanWater <= 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
         {
             happiness -= population / 4;
+            noWater = true;
+            turnsWithoutWater++;
             warningIcon.SetActive(true);
-            if (turnsWithoutWater < 10)
-            {
-                warningIcon.GetComponent<SpriteRenderer>().sprite = wWarning;
-                turnsWithoutWater++;
-            }
+        }
 
-            else if (turnsWithoutWater >= 10 && turnsWithoutWater < 20)
-            {
-                warningIcon.GetComponent<SpriteRenderer>().sprite = wCritical;
-                turnsWithoutWater++;
-            }
-            else
-            {
-                AbandonBuilding();
-            }
-            Debug.Log(turnsWithoutWater);
+        if (curFood > 0 && gameObject.name == "House(Clone)")
+        {
+            happiness += population / 4;
+            City.inst.food -= population / 2;
+            noFood = false;
+        }
+
+        else if (curFood <= 0 && gameObject.name == "House(Clone)")
+        {
+            happiness -= population / 4;
+            noFood = true;
+            turnsWithoutFood++;
+            warningIcon.SetActive(true);
         }
 
         if (electricity > 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
         {
             City.inst.electricity -= population/4;
             happiness += population / 4;
+            noElectric = false;
         }
 
-        if (electricity <= 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+        else if (electricity <= 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
         {
             happiness -= population / 4;
+            noElectric = true;
+            turnsWithoutElectricity++;
+            warningIcon.SetActive(true);
+        }
 
-            if (turnsWithoutElectricity < 10)
+        if (water > 0 && electricity > 0 && !isIll && curFood > 0)
+        {
+            StopAllCoroutines();
+            warningIcon.SetActive(false);
+        }
+
+        SetWarningSymbol();
+    }
+
+    void SetWarningSymbol()
+    {
+        if (noWater)
+        {
+            if (turnsWithoutWater < 10)
             {
-                warningIcon.GetComponent<SpriteRenderer>().sprite = eWarning;
-                turnsWithoutElectricity++;
+                spriteArray[0] = waterWarning;
             }
 
-            else if (turnsWithoutElectricity >= 10 && turnsWithoutElectricity < 20)
+            else if (turnsWithoutWater >= 10 && turnsWithoutWater < 20)
             {
-                warningIcon.GetComponent<SpriteRenderer>().sprite = eCritical;
-                turnsWithoutElectricity++;
+                spriteArray[0] = waterCritical;
             }
             else
             {
                 AbandonBuilding();
             }
-            Debug.Log(turnsWithoutElectricity);
-
         }
+
+        if (noElectric)
+        {
+            if (turnsWithoutElectricity < 10)
+            {
+                spriteArray[1] = electricWarning;
+            }
+
+            else if (turnsWithoutElectricity >= 10 && turnsWithoutElectricity < 20)
+            {
+                spriteArray[1] = electricCritical;
+            }
+            else
+            {
+                AbandonBuilding();
+            }
+        }
+
+        if (noFood)
+        {
+            if (turnsWithoutFood < 10)
+            {
+                spriteArray[2] = foodWarning;
+            }
+
+            else if (turnsWithoutFood >= 10 && turnsWithoutFood < 20)
+            {
+                spriteArray[2] = foodCritical;
+            }
+            else
+            {
+                AbandonBuilding();
+            }
+        }
+
+        if (isIll)
+        {
+            if (turnsIll < 10)
+            {
+                spriteArray[3] = illWarning;
+            }
+
+            else if (turnsIll >= 10 && turnsIll < 20)
+            {
+                spriteArray[2] = illCritical;
+            }
+            else
+            {
+                AbandonBuilding();
+            }
+        }
+
+        StartCoroutine(symbolSwap());
+    }
+
+    IEnumerator symbolSwap()
+    {
+        if (noWater)
+        {
+            warningIcon.GetComponent<SpriteRenderer>().sprite = spriteArray[0];
+            yield return new WaitForSeconds(2);
+        }
+
+        if (noElectric)
+        {
+            warningIcon.GetComponent<SpriteRenderer>().sprite = spriteArray[1];
+            yield return new WaitForSeconds(2);
+        }
+
+        if (noFood)
+        {
+            warningIcon.GetComponent<SpriteRenderer>().sprite = spriteArray[2];
+            yield return new WaitForSeconds(2);
+        }
+
+        if (isIll)
+        {
+            warningIcon.GetComponent<SpriteRenderer>().sprite = spriteArray[3];
+            yield return new WaitForSeconds(2);
+        }
+        StartCoroutine(symbolSwap());
     }
 
     void AbandonBuilding()
