@@ -435,7 +435,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 50
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 5
     m_MaxSize: 50
@@ -609,7 +609,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 40
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 4
     m_MaxSize: 40
@@ -654,7 +654,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &313471276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1237,7 +1237,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 50
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 5
     m_MaxSize: 50
@@ -1316,7 +1316,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 33
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 3
     m_MaxSize: 40
@@ -1333,17 +1333,19 @@ MonoBehaviour:
     Right click
     & drag - Rotate the camera around an anchor point.
 
-
-    Left click - Select
-    and place buildings.
-
+    Left click - Select and
+    place buildings.
 
     Middle click (mouse wheel press) - Display information
     about a tile.
 
-
     F - Rotate the building placer (buildings must face roads
-    - except for water pumps which must face water).'
+    - except for water pumps which must face water).
+
+    P - Pause the game.
+
+    Escape
+    - Cancel placement/delete.'
 --- !u!222 &1405034534
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1444,7 +1446,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1469290024
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1705,7 +1707,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 50
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 90

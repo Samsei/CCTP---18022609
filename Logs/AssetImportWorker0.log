@@ -915,3 +915,37 @@ Received Import Request.
 Start importing Assets/Textures/Quit.png using Guid(f1d4ed0446254e747b4dff0e37402488) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e9794f66e4fbb3717dfeb37edd71cf5c') in 0.007333 seconds
   Import took 0.009250 seconds .
 
+========================================================================
+Received Prepare
+Refreshing native plugins compatible for Editor in 0.72 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 52.2 MB.
+System memory in use after: 52.3 MB.
+
+Unloading 2 unused Assets to reduce memory usage. Loaded Objects now: 1948.
+Total: 2.178900 ms (FindLiveObjects: 0.220600 ms CreateObjectMapping: 0.032400 ms MarkObjects: 1.912700 ms  DeleteObjects: 0.012200 ms)
+
+========================================================================
+Received Prepare
+Refreshing native plugins compatible for Editor in 0.64 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 52.7 MB.
+System memory in use after: 52.8 MB.
+
+Unloading 2 unused Assets to reduce memory usage. Loaded Objects now: 1948.
+Total: 1.835000 ms (FindLiveObjects: 0.167900 ms CreateObjectMapping: 0.028300 ms MarkObjects: 1.627600 ms  DeleteObjects: 0.010400 ms)
+
+========================================================================
+Received Prepare
+Refreshing native plugins compatible for Editor in 0.62 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 52.7 MB.
+System memory in use after: 52.8 MB.
+
+Unloading 2 unused Assets to reduce memory usage. Loaded Objects now: 1948.
+Total: 1.801800 ms (FindLiveObjects: 0.163000 ms CreateObjectMapping: 0.028300 ms MarkObjects: 1.599800 ms  DeleteObjects: 0.009600 ms)
+
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
