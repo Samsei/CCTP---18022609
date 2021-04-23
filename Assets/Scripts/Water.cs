@@ -49,7 +49,7 @@ public class Water : MonoBehaviour
             currentPollution = maxPollution;
         }
 
-        //currentPollution -= 0.1f;
+        currentPollution -= 0.1f;
 
         if (currentPollution < 0.0f)
         {
@@ -135,7 +135,10 @@ public class Water : MonoBehaviour
 
     void MovePollution(GameObject hit, float amount)
     {
-        hit.GetComponent<Water>().currentPollution += amount;
-        currentPollution -= amount;
+        if (hit.GetComponent<Water>().currentPollution < 256.0f)
+        {
+            hit.GetComponent<Water>().currentPollution += amount;
+            currentPollution -= amount;
+        }      
     }
 }

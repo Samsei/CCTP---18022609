@@ -22,7 +22,7 @@ public class Pollution : MonoBehaviour
             currentPollution = maxPollution;
         }
 
-        //currentPollution -= 0.1f;
+        currentPollution -= 0.1f;
 
         if (currentPollution < 0.0f)
         {
@@ -102,7 +102,10 @@ public class Pollution : MonoBehaviour
 
     void MovePollution(GameObject hit, float amount)
     {
-        hit.GetComponent<Pollution>().currentPollution += amount;
-        currentPollution -= amount;
+        if (hit.GetComponent<Pollution>().currentPollution < 256.0f)
+        {
+            hit.GetComponent<Pollution>().currentPollution += amount;
+            currentPollution -= amount;
+        }       
     }
 }
