@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: NuclearPowerStation
   m_EditorClassIdentifier: 
   displayName: 
-  cost: 500
-  costPerTurn: 30
+  cost: 300
+  costPerTurn: 20
   prefab: {fileID: 289006956298963854, guid: 1a4f80428aaaaa449bf2347bb7e81718, type: 3}
   population: 0
   jobs: 20

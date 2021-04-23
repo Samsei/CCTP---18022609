@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SolarPowerStation
   m_EditorClassIdentifier: 
   displayName: 
-  cost: 300
-  costPerTurn: 20
+  cost: 500
+  costPerTurn: 40
   prefab: {fileID: 6549670207974784876, guid: d447a45d1ee687f41a90870f6855e630, type: 3}
   population: 0
   jobs: 0
