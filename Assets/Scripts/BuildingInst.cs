@@ -87,12 +87,7 @@ public class BuildingInst : MonoBehaviour
                     {
                         if (jobs > 0)
                         {
-                            food = maxFood / 5.0f * ((1.0f - (hO.GetComponent<Pollution>().currentPollution / 256.0f / 2.0f)) * jobs);
-                        }
-
-                        if (food < 5)
-                        {
-                            food = 5.0f;
+                            food = 10.0f + (2*jobs) * (1.0f - (hO.GetComponent<Pollution>().currentPollution / 256.0f / 2.0f));
                         }
 
                         else
@@ -102,7 +97,7 @@ public class BuildingInst : MonoBehaviour
                     }
                     else
                     {
-                        food = maxFood / 5.0f * ((1.0f - (hO.GetComponent<Pollution>().currentPollution / 256.0f / 2.0f)) * jobs) / 2.0f;
+                        food = 10.0f + (2 * jobs) * (1.0f - (hO.GetComponent<Pollution>().currentPollution / 256.0f / 2.0f)) / 2.0f;
                         if (food < 2.5f)
                         {
                             food = 2.5f;
@@ -143,7 +138,6 @@ public class BuildingInst : MonoBehaviour
                 ray.direction = new Vector3(0, 1, 0);
                 if (Physics.Raycast(ray, out hitObject))
                 {
-                    Debug.Log("Test");
                     hO = hitObject.transform.gameObject;
                     GetComponent<UtilityBuilding>().electricityProduction = (200 * (1 - hO.GetComponent<Pollution>().currentPollution / 256 / 2));
                 }

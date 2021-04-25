@@ -6,6 +6,7 @@ public class BuildingPlacer : MonoBehaviour
 {
     private bool currentlyPlacing;
     private bool currentlyDeleting;
+    public bool isOverToolbar = false;
     private BuildingPreset curBuildingPreset;
 
     private float lastUpdateTime;
@@ -112,6 +113,16 @@ public class BuildingPlacer : MonoBehaviour
         TileInfo.inst.Close();
     }
 
+    public void OnHover()
+    {
+        isOverToolbar = true;
+    }
+
+    public void OnExit()
+    {
+        isOverToolbar = false;
+    }
+
     void ChangeDirection()
     {
         dirNum++;
@@ -144,7 +155,7 @@ public class BuildingPlacer : MonoBehaviour
         if (currentlyPlacing &&
             Input.GetMouseButtonDown(0) &&           
             City.inst.money >= curBuildingPreset.cost &&
-            !OverWater())
+            !OverWater() && !isOverToolbar)
         {
             return true;
         }

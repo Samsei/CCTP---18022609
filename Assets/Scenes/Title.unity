@@ -584,7 +584,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 800, y: 500}
+  m_SizeDelta: {x: 950, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &277269935
 MonoBehaviour:
@@ -628,7 +628,10 @@ MonoBehaviour:
     and build a city, where the effects of climate change will have an effect on
     both the environment and citizens of the city -  for example, solar panels produce
     less electricity if there is pollution over them, or farms produce less food
-    due to the pollution.'
+    due to the pollution.
+
+    Useful tips: Mountains stop pollution from spreading
+    over them!'
 --- !u!222 &277269936
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1464,8 +1467,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 450, y: -95}
-  m_SizeDelta: {x: 900, y: 600}
+  m_AnchoredPosition: {x: 400, y: -95}
+  m_SizeDelta: {x: 1000, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1469290025
 MonoBehaviour:

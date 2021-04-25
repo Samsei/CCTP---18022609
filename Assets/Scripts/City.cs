@@ -56,6 +56,8 @@ public class City : MonoBehaviour
         {
             waterTiles.Add(p.transform.position, p);
         }
+
+        SetText();
     }
 
     public void OnPlaceBuilding(GameObject building)
@@ -149,8 +151,8 @@ public class City : MonoBehaviour
 
     public void SetText()
     {
-        statsText.text = string.Format("Day: {0}   Money: ${1}   Pop: {2} / {3}   Jobs: {4} / {5}   Food: {6}   Wind Direction: {7}",
-            new object[8]
+        statsText.text = string.Format("Day: {0}   Money: ${1}   Population: {2} / {3}   Jobs: {4} / {5}   Food: {6}   Wind Direction: {7}   Water: {8}   Electricity: {9}",
+            new object[10]
             {
                 day,
                 money,
@@ -159,7 +161,9 @@ public class City : MonoBehaviour
                 jobs,
                 maxJobs,
                 food,
-                windDirection
+                windDirection,
+                water,
+                electricity
             });
     }
 
