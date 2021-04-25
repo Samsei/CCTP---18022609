@@ -8,6 +8,8 @@ public class City : MonoBehaviour
     public int money;
     private int day;
     private int population;
+    private int illPopulation;
+    private int tempPop;
     private int jobs;
     [SerializeField] public float food;
     public float water;
@@ -17,6 +19,7 @@ public class City : MonoBehaviour
     private int maxJobs;
     private int incomePerJob = 5;
     private int turnsUntilWindChange = 5;
+    public bool firstHouse = false;
 
     public TextMeshProUGUI statsText;
     public Dictionary<Vector3, GameObject> buildings = new Dictionary<Vector3, GameObject>();
@@ -107,13 +110,9 @@ public class City : MonoBehaviour
         }
 
         day++;
-        CalculateUtilities();
-        CalculateMoney();
-        CalculateFood();
-        CalculatePopulation();
-        CalculateJobs();
 
-        SetText();
+        CalculateUtilities();
+        CalculateFood();
 
         foreach (var p in buildings.Values)
         {            
@@ -127,6 +126,12 @@ public class City : MonoBehaviour
         {
             p.GetComponent<Water>().EndTurn(waterTiles);
         }
+
+        CalculateMoney();
+        CalculatePopulation();
+        CalculateJobs();
+
+        SetText();
     }
 
     private void CalculateUtilities()
@@ -172,10 +177,12 @@ public class City : MonoBehaviour
     {
         maxPopulation = 0;
         population = 0;
+        illPopulation = 0;
         foreach (var b in buildings.Values)
         {
             maxPopulation += b.GetComponent<BuildingInst>().maxPopulation;
             population += b.GetComponent<BuildingInst>().population;
+            illPopulation += b.GetComponent<BuildingInst>().populationIsIll;
         }
     }
 
@@ -183,22 +190,30 @@ public class City : MonoBehaviour
     {
         jobs = 0;
         maxJobs = 0;
+        tempPop = population - illPopulation;
 
         foreach (GameObject building in buildings.Values)
         {
             maxJobs += building.GetComponent<BuildingInst>().maxJobs;
-            jobs += building.GetComponent<BuildingInst>().jobs;           
+            jobs += building.GetComponent<BuildingInst>().jobs;
         }
 
         foreach (GameObject building in buildings.Values)
         {
-            if (population > 0 && jobs < maxJobs &&
+            if (tempPop > 0 && jobs < maxJobs &&
                 building.GetComponent<BuildingInst>().maxJobs > building.GetComponent<BuildingInst>().jobs &&
-                population > jobs)
+                tempPop > jobs)
             {
                 building.GetComponent<BuildingInst>().jobs++;
+                jobs++;
             }
-        }
+
+            if (tempPop <= 0 && building.GetComponent<BuildingInst>().jobs > 0)
+            {
+                building.GetComponent<BuildingInst>().jobs--;
+                jobs--;
+            }
+        }       
     }
 
     void CalculateFood()

@@ -15,8 +15,12 @@ MonoBehaviour:
   displayName: House_Small
   cost: 20
   costPerTurn: 10
-  prefab: {fileID: 3512389444729558375, guid: 96ad136c90a4c324dabf1615330d4e10, type: 3}
+  prefab: {fileID: 1721156907593072628, guid: 96ad136c90a4c324dabf1615330d4e10, type: 3}
   population: 5
   jobs: 0
   food: 0
   pollution: 0
+  waterProduction: 0
+  electricityProduction: 0
+  waterConsumption: 5
+  electricityConsumption: 5

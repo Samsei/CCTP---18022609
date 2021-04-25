@@ -25,7 +25,8 @@ public class BuildingPlacer : MonoBehaviour
     [SerializeField] Camera cam;
 
     RaycastHit hitObject;
-    Vector3 offset;
+    Vector3 raycastOffset = new Vector3(0, 0.1f, 0);
+    Vector3 rayDirection = new Vector3(0, -1, 0);
     [SerializeField] Material placeMat;
     [SerializeField] Material desMat;
 
@@ -74,7 +75,7 @@ public class BuildingPlacer : MonoBehaviour
             UpdateDelete();
         }
 
-        if (CanPlace() && !CheckForBuilding())
+        if (CanPlaceBuilding() && !CheckForBuilding())
         {
             PlaceBuilding();
         }
@@ -94,6 +95,16 @@ public class BuildingPlacer : MonoBehaviour
             placementIndicator.transform.Rotate(0, 90, 0);
             ChangeDirection();
         }
+    }
+
+    void UpdatePlace()
+    {
+        placementIndicator.transform.position = curPlacementPos;
+    }
+
+    void UpdateDelete()
+    {
+        deleteIndicator.transform.position = curPlacementPos;
     }
 
     void DisableText()
@@ -128,7 +139,7 @@ public class BuildingPlacer : MonoBehaviour
         }       
     }
 
-    bool CanPlace()
+    bool CanPlaceBuilding()
     {
         if (currentlyPlacing &&
             Input.GetMouseButtonDown(0) &&           
@@ -143,11 +154,10 @@ public class BuildingPlacer : MonoBehaviour
     void FindObjectOnTile()
     {
         curPlacementPos = Selector.inst.GetCurTilePosition();
-        offset = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z);
 
-        if (placedBuildings.ContainsKey(offset))
+        if (placedBuildings.ContainsKey(curPlacementPos))
         {
-            TileInfo.inst.OpenInfoBar(placedBuildings[offset]);
+            TileInfo.inst.OpenInfoBar(placedBuildings[curPlacementPos]);
         }
         else if (OverWater())
         {
@@ -162,18 +172,18 @@ public class BuildingPlacer : MonoBehaviour
 
     bool OverWater()
     {
-        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2,  water))
+        if (Physics.Raycast(curPlacementPos + raycastOffset, rayDirection, out hitObject, 2,  water))
         {
             hO = hitObject.transform.gameObject;
             return true;
         }
-        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2, border))
+        if (Physics.Raycast(curPlacementPos + raycastOffset, rayDirection, out hitObject, 2, border))
         {
             hO = hitObject.transform.gameObject;
             return true;
         }
 
-        else if (!Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), 2))
+        else if (!Physics.Raycast(curPlacementPos + raycastOffset, rayDirection, 2))
         {
             return true;
         }
@@ -184,8 +194,7 @@ public class BuildingPlacer : MonoBehaviour
     bool OverGround()
     {
         int layerMask = 1 << 9;
-
-        if (Physics.Raycast(curPlacementPos, new Vector3(0, -2, 0), out hitObject, 2, layerMask))
+        if (Physics.Raycast(curPlacementPos + raycastOffset, rayDirection, out hitObject, 2, layerMask))
         {
             hO = hitObject.transform.gameObject;
             return true;
@@ -196,7 +205,7 @@ public class BuildingPlacer : MonoBehaviour
 
     public bool CheckForBuilding()
     {
-        if (placedBuildings.ContainsKey(new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z)))
+        if (placedBuildings.ContainsKey(new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z)))
         {
             return true;
         }
@@ -212,11 +221,15 @@ public class BuildingPlacer : MonoBehaviour
     bool CheckForRoad()
     {
         GetForwardPos();
-        if (curBuildingPreset.name == "WaterPump" && waterTiles.ContainsKey(vec) && waterTiles.ContainsKey(vec))
+        if (curBuildingPreset.name == "Forest" && OverGround())
         {
             return true;
         }
-        else if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].name == "Road(Clone)")
+        else if (curBuildingPreset.name == "WaterPump" && waterTiles.ContainsKey(vec) && waterTiles.ContainsKey(vec))
+        {
+            return true;
+        }
+        else if (placedBuildings.ContainsKey(vec) && placedBuildings[vec].name == "Road(Clone)" && curBuildingPreset.name != "WaterPump" && curBuildingPreset.name != "Forest")
         {
             return true;
         }
@@ -229,42 +242,31 @@ public class BuildingPlacer : MonoBehaviour
         switch (direction)
         {
             case "South":
-                vec = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z + 1);
+                vec = new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z + 1);
                 break;
             case "West":
-                vec = new Vector3(curPlacementPos.x + 1, curPlacementPos.y - 0.1f, curPlacementPos.z);
+                vec = new Vector3(curPlacementPos.x + 1, curPlacementPos.y, curPlacementPos.z);
                 break;
             case "North":
-                vec = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z - 1);
+                vec = new Vector3(curPlacementPos.x, curPlacementPos.y, curPlacementPos.z - 1);
                 break;
             case "East":
-                vec = new Vector3(curPlacementPos.x - 1, curPlacementPos.y - 0.1f, curPlacementPos.z);
+                vec = new Vector3(curPlacementPos.x - 1, curPlacementPos.y, curPlacementPos.z);
                 break;
             default:
                 vec = new Vector3(0, 1, 0);
                 break;
         }
     }
-
-    void UpdatePlace()
-    {
-        placementIndicator.transform.position = curPlacementPos;       
-    }
-
-    void UpdateDelete()
-    {
-        deleteIndicator.transform.position = curPlacementPos;
-    }
-
+    
     public void DeleteBuilding()
     {
-        offset = new Vector3(curPlacementPos.x, curPlacementPos.y - 0.1f, curPlacementPos.z);
-        if (placedBuildings.ContainsKey(offset))
+        if (placedBuildings.ContainsKey(curPlacementPos))
         {
-            City.inst.RemoveBuilding(placedBuildings[offset]);
-            GameObject t = placedBuildings[offset];
+            City.inst.RemoveBuilding(placedBuildings[curPlacementPos]);
+            GameObject t = placedBuildings[curPlacementPos];
 
-            placedBuildings.Remove(offset);
+            placedBuildings.Remove(curPlacementPos);
             Destroy(t, 0);
         }
     }
@@ -301,7 +303,7 @@ public class BuildingPlacer : MonoBehaviour
 
     void PlaceBuilding()
     {
-        GameObject buildingObj = Instantiate(curBuildingPreset.prefab, curPlacementPos - new Vector3( 0, 0.1f, 0), Quaternion.identity);
+        GameObject buildingObj = Instantiate(curBuildingPreset.prefab, curPlacementPos, Quaternion.identity);
         buildingObj.transform.rotation = placementIndicator.transform.rotation;
         BuildingInst bi = buildingObj.GetComponent<BuildingInst>();
 
@@ -310,7 +312,15 @@ public class BuildingPlacer : MonoBehaviour
         bi.maxFood = curBuildingPreset.food;
         bi.maxJobs = curBuildingPreset.jobs;
         bi.maxPopulation = curBuildingPreset.population;
+        if (bi.maxPopulation > 0 && !City.inst.firstHouse)
+        {
+            bi.population = bi.maxPopulation;
+            City.inst.firstHouse = true;
+        }
+
         bi.pollutionPerTurn = curBuildingPreset.pollution;
+        bi.waterConsumption = curBuildingPreset.waterConsumption;
+        bi.electricityConsumption = curBuildingPreset.electricityConsumption;
 
         City.inst.OnPlaceBuilding(buildingObj);
 

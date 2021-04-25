@@ -28,7 +28,7 @@ public class Selector : MonoBehaviour
         if(plane.Raycast(cam.ScreenPointToRay(Input.mousePosition), out rayOut))
         {
             newPos = ray.GetPoint(rayOut) - new Vector3(0.5f, 0.0f, 0.5f);
-            return new Vector3(Mathf.CeilToInt(newPos.x), 0.1f, Mathf.CeilToInt(newPos.z));
+            return new Vector3(Mathf.CeilToInt(newPos.x), 0f, Mathf.CeilToInt(newPos.z));
         }
 
         return new Vector3(0, -99, 0);

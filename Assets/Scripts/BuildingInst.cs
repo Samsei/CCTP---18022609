@@ -11,14 +11,16 @@ public class BuildingInst : MonoBehaviour
     public float maxFood;
     public int maxPopulation;
     public int maxJobs;
-
+    public int waterConsumption;
+    public int electricityConsumption;
     public float food;
     public int population;
+    public int populationIsIll;
     public int jobs;
-
     public int happiness = 75;
-
-    public int pollutionPerTurn;
+    public float pollutionPerTurn;
+    public float pollutionPTMax;
+    public int foodConsumption;
 
     private int turnsWithoutWater;
     private int turnsWithoutElectricity;
@@ -33,6 +35,7 @@ public class BuildingInst : MonoBehaviour
     private bool noElectric = false;
     private bool noFood = false;
     private bool isIll = false;
+    private bool isIllFromWater = false;
     private bool isAbandoned = false;
 
     [SerializeField] GameObject warningIcon;
@@ -47,13 +50,19 @@ public class BuildingInst : MonoBehaviour
     [SerializeField] Sprite illCritical;
     [SerializeField] Sprite abandoned;
 
+    private void Start()
+    {
+        pollutionPTMax = pollutionPerTurn;
+    }
+
     public void EndTurn(float water, float uncleanWater, float electricity, float curFood)
     {
-        if (!isAbandoned)
+        if (!isAbandoned && name != "Forest(Clone)")
         {
             StopAllCoroutines();
+            warningIcon.SetActive(false);
 
-            if (pollutionPerTurn > 0)
+            if (pollutionPerTurn != 0)
             {
                 ray.origin = gameObject.transform.position;
                 ray.direction = new Vector3(0, 1, 0);
@@ -62,6 +71,9 @@ public class BuildingInst : MonoBehaviour
                     hO = hitObject.transform.gameObject;
                     hO.GetComponent<Pollution>().currentPollution += pollutionPerTurn;
                 }
+
+                if (pollutionPTMax > 0)
+                pollutionPerTurn = pollutionPTMax * (0.5f + jobs / (maxJobs * 2));
             }
 
             if (maxFood > 0)
@@ -71,7 +83,31 @@ public class BuildingInst : MonoBehaviour
                 if (Physics.Raycast(ray, out hitObject))
                 {
                     hO = hitObject.transform.gameObject;
-                    food = maxFood * (1.0f - (hO.GetComponent<Pollution>().currentPollution / 256.0f / 2));
+                    if (water > waterConsumption)
+                    {
+                        if (jobs > 0)
+                        {
+                            food = maxFood / 5.0f * ((1.0f - (hO.GetComponent<Pollution>().currentPollution / 256.0f / 2.0f)) * jobs);
+                        }
+
+                        if (food < 5)
+                        {
+                            food = 5.0f;
+                        }
+
+                        else
+                        {
+                            food = 5;
+                        } 
+                    }
+                    else
+                    {
+                        food = maxFood / 5.0f * ((1.0f - (hO.GetComponent<Pollution>().currentPollution / 256.0f / 2.0f)) * jobs) / 2.0f;
+                        if (food < 2.5f)
+                        {
+                            food = 2.5f;
+                        }
+                    }
                 }
             }
 
@@ -79,18 +115,26 @@ public class BuildingInst : MonoBehaviour
             {
                 ray.origin = gameObject.transform.position;
                 ray.direction = new Vector3(0, 1, 0);
-                if (Physics.Raycast(ray, out hitObject))
+                if (!isIll && Physics.Raycast(ray, out hitObject))
                 {
                     hO = hitObject.transform.gameObject;
                     if (hO.GetComponent<Pollution>().currentPollution / 256 > 0.35f)
                     {
                         isIll = true;
                     }
-                    else
+                }
+
+                else if (isIll && Physics.Raycast(ray, out hitObject))
+                {
+                    hO = hitObject.transform.gameObject;
+                    if (hO.GetComponent<Pollution>().currentPollution / 256 < 0.35f)
                     {
                         isIll = false;
+                        turnsIll = 0;
                     }
                 }
+
+                foodConsumption = population;
             }
 
             if (gameObject.name == "SolarPanel(Clone)")
@@ -105,22 +149,30 @@ public class BuildingInst : MonoBehaviour
                 }
             }
 
-            if (water > 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+            if (gameObject.name == "NuclearStation(Clone)")
             {
-                City.inst.water -= population / 2;
-                happiness += population / 4;
-                noWater = false;
+                GetComponent<UtilityBuilding>().electricityProduction = 400.0f * (0.5f + jobs / (maxJobs * 2));
             }
 
-            else if (uncleanWater > 0 && water < 0 && gameObject.name == "House(Clone)")
+            if (uncleanWater > waterConsumption && gameObject.name == "House(Clone)")
             {
-                City.inst.uncleanWater -= population / 2;
+                City.inst.uncleanWater -= waterConsumption;
                 happiness -= population / 8;
-                isIll = true;
-                warningIcon.SetActive(true);
+                isIllFromWater = true;
+                warningIcon.SetActive(true);         
             }
 
-            else if (water <= 0 && uncleanWater <= 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+            else if (water > waterConsumption && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+            {
+                City.inst.water -= waterConsumption;
+                happiness += population / 4;
+                isIllFromWater = false;
+                noWater = false;
+                turnsWithoutWater = 0;
+                turnsIll = 0;
+            }
+
+            else if (water < waterConsumption && uncleanWater <= waterConsumption && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
             {
                 happiness -= population / 4;
                 noWater = true;
@@ -128,7 +180,7 @@ public class BuildingInst : MonoBehaviour
                 warningIcon.SetActive(true);
             }
 
-            if (curFood > 0 && gameObject.name == "House(Clone)")
+            if (curFood > foodConsumption && gameObject.name == "House(Clone)")
             {
                 if (population < maxPopulation)
                 {
@@ -136,26 +188,28 @@ public class BuildingInst : MonoBehaviour
                 }
 
                 happiness += population / 4;
-                City.inst.food -= population / 2;
+                City.inst.food -= foodConsumption;
                 noFood = false;
+                turnsWithoutFood = 0;
             }
 
-            else if (curFood <= 0 && gameObject.name == "House(Clone)")
+            else if (curFood < foodConsumption && gameObject.name == "House(Clone)")
             {
-                happiness -= population / 4;
+                happiness -= population;
                 noFood = true;
                 turnsWithoutFood++;
                 warningIcon.SetActive(true);
             }
 
-            if (electricity > 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+            if (electricity > electricityConsumption && gameObject.name != "Road(Clone)")
             {
-                City.inst.electricity -= population / 4;
+                City.inst.electricity -= electricityConsumption;
                 happiness += population / 4;
                 noElectric = false;
+                turnsWithoutElectricity = 0;
             }
 
-            else if (electricity <= 0 && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
+            else if (electricity < electricityConsumption && gameObject.name != "Road(Clone)")
             {
                 happiness -= population / 4;
                 noElectric = true;
@@ -163,7 +217,7 @@ public class BuildingInst : MonoBehaviour
                 warningIcon.SetActive(true);
             }
 
-            if (water > 0 && electricity > 0 && !isIll && curFood > 0)
+            if (water > waterConsumption && electricity > electricityConsumption && !isIll && curFood > foodConsumption && isIllFromWater)
             {
                 StopAllCoroutines();
                 warningIcon.SetActive(false);
@@ -172,7 +226,7 @@ public class BuildingInst : MonoBehaviour
             SetWarningSymbol();
         }
 
-        else
+        else if (name != "Forest(Clone)")
         {
             warningIcon.GetComponent<SpriteRenderer>().sprite = abandoned;
         }
@@ -231,8 +285,14 @@ public class BuildingInst : MonoBehaviour
             }
         }
 
-        if (isIll)
+        if (isIll || isIllFromWater)
         {
+            populationIsIll++;
+            if (populationIsIll > population)
+            {
+                populationIsIll = population;
+            }
+
             if (turnsIll < 10)
             {
                 spriteArray[3] = illWarning;
@@ -277,7 +337,13 @@ public class BuildingInst : MonoBehaviour
             yield return new WaitForSeconds(2);
         }
 
-        if ((noWater || noElectric || noFood || isIll) && !isAbandoned)
+        if (isIllFromWater && !isAbandoned)
+        {
+            warningIcon.GetComponent<SpriteRenderer>().sprite = spriteArray[3];
+            yield return new WaitForSeconds(2);
+        }
+
+        if ((noWater || noElectric || noFood || isIll || isIllFromWater) && !isAbandoned)
         {
             StartCoroutine(symbolSwap());
         }

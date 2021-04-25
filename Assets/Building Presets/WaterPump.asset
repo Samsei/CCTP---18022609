@@ -22,3 +22,5 @@ MonoBehaviour:
   pollution: 0
   waterProduction: 0
   electricityProduction: 0
+  waterConsumption: 0
+  electricityConsumption: 5

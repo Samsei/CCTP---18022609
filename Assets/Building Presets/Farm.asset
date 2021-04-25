@@ -15,8 +15,12 @@ MonoBehaviour:
   displayName: Farm
   cost: 10
   costPerTurn: 5
-  prefab: {fileID: 7082387414722272705, guid: 3c32a92bf82a80745be023ad7c057b67, type: 3}
+  prefab: {fileID: 2505854138330332446, guid: 3c32a92bf82a80745be023ad7c057b67, type: 3}
   population: 0
   jobs: 5
   food: 10
   pollution: 0
+  waterProduction: 0
+  electricityProduction: 0
+  waterConsumption: 10
+  electricityConsumption: 3

@@ -38,37 +38,57 @@ public class TileInfo : MonoBehaviour
         {
             if (tile.GetComponent<BuildingInst>().maxPopulation > 0)
             {
-                statsText.text = string.Format("Population: {0} / Max Population: {1} \nHappiness: {2}% \nAir pollution: {3}% \nCost per Turn: {4}\n",
-                    new object[5]
+                statsText.text = string.Format("Population: {0} / Max Population: {1} \nHappiness: {2}% \nAir pollution: {3}% \nFood consumption per turn {4}:\nWater consumption per turn: {5}\nPopulation that is ill: {6}\nCost per Turn: {7}\n",
+                    new object[8]
                     {
                         tile.GetComponent<BuildingInst>().population,
                         tile.GetComponent<BuildingInst>().maxPopulation,
                         tile.GetComponent<BuildingInst>().happiness,
                         (hO.GetComponent<Pollution>().currentPollution / 256 * 100),
+                        tile.GetComponent<BuildingInst>().foodConsumption,
+                        tile.GetComponent<BuildingInst>().waterConsumption,
+                        tile.GetComponent<BuildingInst>().populationIsIll,
                         tile.GetComponent<BuildingInst>().costPerTurn,
                     });
             }
             else if (tile.GetComponent<BuildingInst>().maxFood > 0)
             {
-                statsText.text = string.Format("Jobs: {0} / Max Jobs: {1} \nFood per Turn: {2} \nAir pollution: {3}% \nCost per Turn: {4}\n",
-                    new object[5]
+                statsText.text = string.Format("Jobs: {0} / Max Jobs: {1} \nFood per Turn: {2} \nAir pollution: {3}% \nWater consumption per turn: {4}\nCost per Turn: {5}\n",
+                    new object[6]
                     {
                         tile.GetComponent<BuildingInst>().jobs,
                         tile.GetComponent<BuildingInst>().maxJobs,
                         tile.GetComponent<BuildingInst>().food,
                         (hO.GetComponent<Pollution>().currentPollution / 256 * 100),
+                        tile.GetComponent<BuildingInst>().waterConsumption,
                         tile.GetComponent<BuildingInst>().costPerTurn,
                     });
             }
-            else if (tile.GetComponent<BuildingInst>().pollutionPerTurn > 0)
+            else if (tile.name == "Factory(Clone)")
             {           
-                statsText.text = string.Format("Jobs: {0} / Max Jobs: {1} \nPollution per Turn: {2} \nAir pollution: {3}% \nCost per Turn: {4}\n",
-                    new object[5]
+                statsText.text = string.Format("Jobs: {0} / Max Jobs: {1} \nPollution per Turn: {2} \nAir pollution: {3}% \nWater consumption per turn: {4}\nCost per Turn: {5}\n",
+                    new object[6]
                     {
                         tile.GetComponent<BuildingInst>().jobs,
                         tile.GetComponent<BuildingInst>().maxJobs,
                         tile.GetComponent<BuildingInst>().pollutionPerTurn,
                         (hO.GetComponent<Pollution>().currentPollution / 256 * 100),
+                        tile.GetComponent<BuildingInst>().waterConsumption,
+                        tile.GetComponent<BuildingInst>().costPerTurn,
+                    });
+            }
+
+            else if (tile.name == "NuclearStation(Clone)")
+            {
+                statsText.text = string.Format("Jobs: {0} / Max Jobs: {1} \nPollution per Turn: {2} \nAir pollution: {3}% \nElectricity production per turn: {4}\nWater consumption per turn: {5}\nCost per Turn: {6}\n",
+                    new object[7]
+                    {
+                        tile.GetComponent<BuildingInst>().jobs,
+                        tile.GetComponent<BuildingInst>().maxJobs,
+                        tile.GetComponent<BuildingInst>().pollutionPerTurn,
+                        (hO.GetComponent<Pollution>().currentPollution / 256 * 100),
+                        tile.GetComponent<UtilityBuilding>().electricityProduction,
+                        tile.GetComponent<BuildingInst>().waterConsumption,
                         tile.GetComponent<BuildingInst>().costPerTurn,
                     });
             }
@@ -104,6 +124,11 @@ public class TileInfo : MonoBehaviour
                         {                               
                                 hO.GetComponent<Pollution>().currentPollution / 256 * 100
                         });
+            }
+
+            else if (tile.name == "Forest(Clone)")
+            {
+                statsText.text = string.Format("Reduces air pollution by: 5% per turn");
             }
         }
 
