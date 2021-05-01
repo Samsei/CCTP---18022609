@@ -108,24 +108,25 @@ public class BuildingInst : MonoBehaviour
 
             if (gameObject.name == "House(Clone)")
             {
+                Debug.Log(isIll);
+                Debug.Log(isIllFromWater);
+                Debug.Log(turnsIll);
+
                 ray.origin = gameObject.transform.position;
                 ray.direction = new Vector3(0, 1, 0);
-                if (!isIll && Physics.Raycast(ray, out hitObject))
+                if (Physics.Raycast(ray, out hitObject))
                 {
                     hO = hitObject.transform.gameObject;
-                    if (hO.GetComponent<Pollution>().currentPollution / 256 > 0.35f)
+                    if (hO.GetComponent<Pollution>().currentPollution / 256.0f > 0.35f)
                     {
                         isIll = true;
+                        warningIcon.SetActive(true);
+                        turnsIll++;
                     }
-                }
 
-                else if (isIll && Physics.Raycast(ray, out hitObject))
-                {
-                    hO = hitObject.transform.gameObject;
-                    if (hO.GetComponent<Pollution>().currentPollution / 256 < 0.35f)
+                    else if (hO.GetComponent<Pollution>().currentPollution / 256.0f < 0.35f)
                     {
                         isIll = false;
-                        turnsIll = 0;
                     }
                 }
 
@@ -153,6 +154,7 @@ public class BuildingInst : MonoBehaviour
                 City.inst.uncleanWater -= waterConsumption;
                 happiness -= population / 8;
                 isIllFromWater = true;
+                turnsIll++;
                 warningIcon.SetActive(true);         
             }
 
@@ -163,7 +165,6 @@ public class BuildingInst : MonoBehaviour
                 isIllFromWater = false;
                 noWater = false;
                 turnsWithoutWater = 0;
-                turnsIll = 0;
             }
 
             else if (water < waterConsumption && uncleanWater <= waterConsumption && !gameObject.CompareTag("util") && gameObject.name != "Road(Clone)")
@@ -211,13 +212,25 @@ public class BuildingInst : MonoBehaviour
                 warningIcon.SetActive(true);
             }
 
-            if (water > waterConsumption && electricity > electricityConsumption && !isIll && curFood > foodConsumption && isIllFromWater)
+            if (water > waterConsumption && electricity > electricityConsumption && !isIll && curFood > foodConsumption && !isIllFromWater)
             {
                 StopAllCoroutines();
                 warningIcon.SetActive(false);
             }
 
             SetWarningSymbol();
+
+            if (!isIll && !isIllFromWater)
+            {
+                if (populationIsIll > 0)
+                {
+                    populationIsIll--;
+                }
+                else
+                {
+                    turnsIll = 0;
+                }
+            }
         }
 
         else if (name != "Forest(Clone)")
