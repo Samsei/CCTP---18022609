@@ -183,14 +183,14 @@ public class BuildingPlacer : MonoBehaviour
 
     bool OverWater()
     {
-        if (Physics.Raycast(curPlacementPos + raycastOffset, rayDirection, out hitObject, 2,  water))
+        if (City.inst.waterTiles.ContainsKey(curPlacementPos))
         {
-            hO = hitObject.transform.gameObject;
+            hO = City.inst.waterTiles[curPlacementPos];
             return true;
         }
-        if (Physics.Raycast(curPlacementPos + raycastOffset, rayDirection, out hitObject, 2, border))
+        if (City.inst.borderTiles.ContainsKey(curPlacementPos))
         {
-            hO = hitObject.transform.gameObject;
+            hO = City.inst.borderTiles[curPlacementPos];
             return true;
         }
 
@@ -204,10 +204,9 @@ public class BuildingPlacer : MonoBehaviour
 
     bool OverGround()
     {
-        int layerMask = 1 << 9;
-        if (Physics.Raycast(curPlacementPos + raycastOffset, rayDirection, out hitObject, 2, layerMask))
+        if (City.inst.groundTiles.ContainsKey(curPlacementPos))
         {
-            hO = hitObject.transform.gameObject;
+            hO = City.inst.groundTiles[curPlacementPos];
             return true;
         }
 

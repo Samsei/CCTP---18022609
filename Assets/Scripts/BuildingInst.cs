@@ -76,7 +76,7 @@ public class BuildingInst : MonoBehaviour
                 pollutionPerTurn = pollutionPTMax * (0.5f + jobs / (maxJobs * 2));
             }
 
-            if (maxFood > 0)
+            if (name == "Farm(Clone)")
             {
                 ray.origin = gameObject.transform.position;
                 ray.direction = new Vector3(0, 1, 0);

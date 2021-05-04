@@ -6,10 +6,10 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
 
-    [SerializeField] private float minXRot;
-    [SerializeField] private float maxXRot;
+    [SerializeField] private float minXRotation;
+    [SerializeField] private float maxXRotation;
 
-    [SerializeField] private float curXRot;
+    [SerializeField] private float currentXRotation;
 
     [SerializeField] private float minZoom;
     [SerializeField] private float maxZoom;
@@ -31,7 +31,7 @@ public class CameraController : MonoBehaviour
     {
         cam = Camera.main;
         curZoom = cam.transform.localPosition.y;
-        curXRot = -50;
+        currentXRotation = -50;
     }
 
     void Update()
@@ -46,10 +46,10 @@ public class CameraController : MonoBehaviour
             x = Input.GetAxis("Mouse X");
             y = Input.GetAxis("Mouse Y");
 
-            curXRot += -y * rotateSpeed;
-            curXRot = Mathf.Clamp(curXRot, minXRot, maxXRot);
+            currentXRotation += -y * rotateSpeed;
+            currentXRotation = Mathf.Clamp(currentXRotation, minXRotation, maxXRotation);
 
-            transform.eulerAngles = new Vector3(curXRot, transform.eulerAngles.y + (x * rotateSpeed), 0.0f);
+            transform.eulerAngles = new Vector3(currentXRotation, transform.eulerAngles.y + (x * rotateSpeed), 0.0f);
         }
 
         Vector3 forward = cam.transform.forward;

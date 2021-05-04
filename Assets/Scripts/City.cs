@@ -25,6 +25,8 @@ public class City : MonoBehaviour
     public Dictionary<Vector3, GameObject> buildings = new Dictionary<Vector3, GameObject>();
     public Dictionary<Vector3, GameObject> pollutionClouds = new Dictionary<Vector3, GameObject>();
     public Dictionary<Vector3, GameObject> waterTiles = new Dictionary<Vector3, GameObject>();
+    public Dictionary<Vector3, GameObject> groundTiles = new Dictionary<Vector3, GameObject>();
+    public Dictionary<Vector3, GameObject> borderTiles = new Dictionary<Vector3, GameObject>();
 
     public static City inst;
     public GameObject pauseUI;
@@ -55,6 +57,16 @@ public class City : MonoBehaviour
         foreach (var p in GameObject.FindGameObjectsWithTag("water"))
         {
             waterTiles.Add(p.transform.position, p);
+        }
+
+        foreach (var p in GameObject.FindGameObjectsWithTag("ground"))
+        {
+            groundTiles.Add(p.transform.position, p);
+        }
+
+        foreach (var p in GameObject.FindGameObjectsWithTag("border"))
+        {
+            borderTiles.Add(p.transform.position, p);
         }
 
         SetText();
