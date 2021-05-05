@@ -51,11 +51,16 @@ MonoBehaviour:
   maxFood: 0
   maxPopulation: 0
   maxJobs: 0
+  waterConsumption: 0
+  electricityConsumption: 0
   food: 0
   population: 0
+  populationIsIll: 0
   jobs: 0
   happiness: 75
   pollutionPerTurn: 0
+  pollutionPTMax: 0
+  foodConsumption: 0
   warningIcon: {fileID: 5586107725735133002}
   spriteArray:
   - {fileID: 0}
@@ -275,6 +280,18 @@ PrefabInstance:
     - target: {fileID: 1265850709546195063, guid: 6909703efa89c144591eec9faed26ad6, type: 3}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1265850709546195063, guid: 6909703efa89c144591eec9faed26ad6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 1265850709546195063, guid: 6909703efa89c144591eec9faed26ad6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 1265850709546195063, guid: 6909703efa89c144591eec9faed26ad6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 1265850709546195063, guid: 6909703efa89c144591eec9faed26ad6, type: 3}
       propertyPath: m_LocalPosition.x

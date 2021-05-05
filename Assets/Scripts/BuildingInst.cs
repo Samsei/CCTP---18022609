@@ -108,10 +108,6 @@ public class BuildingInst : MonoBehaviour
 
             if (gameObject.name == "House(Clone)")
             {
-                Debug.Log(isIll);
-                Debug.Log(isIllFromWater);
-                Debug.Log(turnsIll);
-
                 ray.origin = gameObject.transform.position;
                 ray.direction = new Vector3(0, 1, 0);
                 if (Physics.Raycast(ray, out hitObject))
