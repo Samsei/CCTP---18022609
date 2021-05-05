@@ -136,7 +136,7 @@ public class BuildingInst : MonoBehaviour
                 if (Physics.Raycast(ray, out hitObject))
                 {
                     hO = hitObject.transform.gameObject;
-                    GetComponent<UtilityBuilding>().electricityProduction = (200 * (1 - hO.GetComponent<Pollution>().currentPollution / 256 / 2));
+                    GetComponent<UtilityBuilding>().electricityProduction = 200 * (1 - hO.GetComponent<Pollution>().currentPollution / 256 / 2);
                 }
             }
 

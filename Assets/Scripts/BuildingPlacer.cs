@@ -16,9 +16,6 @@ public class BuildingPlacer : MonoBehaviour
     private string direction = "South";
     private int dirNum = 0;
 
-    int water = 1 << 8;
-    int border = 1 << 10;
-
     [SerializeField] GameObject placementIndicator;
     [SerializeField] GameObject deleteIndicator;
     [SerializeField] GameObject canvas;
